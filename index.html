@@ -4,7 +4,32 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>SSR Remodelaciones — Control de Planillas</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+  // Carga Chart.js probando varios proveedores, por si alguno está
+  // bloqueado por una extensión del navegador o firewall corporativo.
+  (function () {
+    var fuentes = [
+      'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js',
+      'https://unpkg.com/chart.js@4.4.4/dist/chart.umd.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js'
+    ];
+    var intento = 0;
+    function cargarSiguiente() {
+      if (intento >= fuentes.length) {
+        console.error('No se pudo cargar Chart.js desde ningún proveedor.');
+        return;
+      }
+      var s = document.createElement('script');
+      s.src = fuentes[intento];
+      s.onerror = function () {
+        intento++;
+        cargarSiguiente();
+      };
+      document.head.appendChild(s);
+    }
+    cargarSiguiente();
+  })();
+</script>
 <style>
   :root{
     --navy:#172A46;
@@ -391,6 +416,24 @@
   }
 
   function renderCharts(data){
+    if (typeof Chart === 'undefined'){
+      // Chart.js todavía no cargó (o los 3 proveedores fallaron). Reintenta
+      // un par de veces antes de rendirse, en vez de dejar los paneles
+      // vacíos sin explicación.
+      window._chartRetries = (window._chartRetries || 0) + 1;
+      if (window._chartRetries <= 10){
+        setTimeout(function(){ renderCharts(data); }, 400);
+      } else {
+        ['chartDia','chartTrabajador','chartProyecto'].forEach(function(id){
+          var c = document.getElementById(id);
+          if (c && c.parentNode){
+            c.parentNode.insertAdjacentHTML('beforeend', '<p style="color:#EB5757;font-size:12px;">No se pudo cargar la librería de gráficos (posiblemente bloqueada por una extensión del navegador).</p>');
+          }
+        });
+      }
+      return;
+    }
+
     var ctxDia = document.getElementById('chartDia').getContext('2d');
     var ctxTrab = document.getElementById('chartTrabajador').getContext('2d');
     var ctxProy = document.getElementById('chartProyecto').getContext('2d');
