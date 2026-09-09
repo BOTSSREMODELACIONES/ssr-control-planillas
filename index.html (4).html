@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SSR Remodelaciones — Control de Planillas</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  :root{
+    --navy:#172A46;
+    --navy2:#213B60;
+    --green:#12A66A;
+    --green-light:#E7F7EF;
+    --blue:#2F80ED;
+    --blue-light:#EAF3FF;
+    --orange:#F5A623;
+    --orange-light:#FFF4DE;
+    --purple:#7656D6;
+    --purple-light:#F0EBFF;
+    --red:#EB5757;
+    --red-light:#FDECEC;
+    --bg:#F4F7FB;
+    --text:#172A46;
+    --muted:#6C7A90;
+    --border:#D9E2EF;
+    --white:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    background:linear-gradient(120deg,var(--navy),var(--navy2));
+    color:#fff;
+    padding:18px 28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:14px;
+  }
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand .logo{
+    width:46px;height:46px;border-radius:10px;
+    background:#fff;color:var(--navy);
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;font-weight:700;
+  }
+  .brand h1{font-size:19px;margin:0;font-weight:700;}
+  .brand p{margin:2px 0 0;font-size:12.5px;opacity:.85;}
+  .status{
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  }
+  .status .datetime{font-size:12.5px;text-align:right;line-height:1.5;opacity:.9;}
+  .live{
+    display:flex;align-items:center;gap:7px;
+    background:rgba(18,166,106,.18);
+    border:1px solid rgba(18,166,106,.5);
+    padding:6px 12px;border-radius:20px;font-size:12.5px;font-weight:600;
+  }
+  .live .dot{
+    width:8px;height:8px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 0 0 rgba(18,166,106,.6);
+    animation:pulse 1.8s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(18,166,106,.55);}
+    70%{box-shadow:0 0 0 8px rgba(18,166,106,0);}
+    100%{box-shadow:0 0 0 0 rgba(18,166,106,0);}
+  }
+
+  main{max-width:1400px;margin:0 auto;padding:22px 28px 60px;}
+
+  /* ---------- KPI CARDS ---------- */
+  .kpis{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:14px;
+    margin-bottom:20px;
+  }
+  .kpi{
+    background:var(--white);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:16px;
+  }
+  .kpi .icon{
+    width:34px;height:34px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;margin-bottom:10px;
+  }
+  .kpi .value{font-size:26px;font-weight:700;line-height:1;}
+  .kpi .label{font-size:12px;color:var(--muted);margin-top:6px;}
+  .kpi .trend{font-size:11px;font-weight:600;margin-top:4px;}
+
+  .icon.blue{background:var(--blue-light);color:var(--blue);}
+  .icon.green{background:var(--green-light);color:var(--green);}
+  .icon.red{background:var(--red-light);color:var(--red);}
+  .icon.purple{background:var(--purple-light);color:var(--purple);}
+  .icon.orange{background:var(--orange-light);color:var(--orange);}
+
+  /* ---------- FILTERS ---------- */
+  .filters{
+    background:var(--white);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px 16px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+    margin-bottom:20px;
+  }
+  .filters label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px;}
+  .filters .field{display:flex;flex-direction:column;}
+  .filters input, .filters select{
+    padding:8px 10px;border:1px solid var(--border);border-radius:7px;
+    font-size:13px;background:#fff;color:var(--text);min-width:140px;
+  }
+  .filters button{
+    padding:9px 16px;border-radius:7px;border:1px solid var(--border);
+    background:#fff;color:var(--text);font-size:13px;cursor:pointer;font-weight:600;
+    align-self:flex-end;
+  }
+  .filters button:hover{background:var(--bg);}
+  .filters .config{margin-left:auto;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;align-self:center;}
+
+  /* ---------- LAYOUT ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:2fr 1.1fr;
+    gap:18px;
+  }
+  .panel{
+    background:var(--white);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:16px;
+  }
+  .panel h3{font-size:14px;margin:0 0 12px;font-weight:700;}
+  .panel-sub{margin-top:16px;}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  thead th{
+    text-align:left;color:var(--muted);font-weight:600;
+    padding:8px 8px;border-bottom:1px solid var(--border);
+    white-space:nowrap;
+  }
+  tbody td{padding:9px 8px;border-bottom:1px solid #EEF2F8;white-space:nowrap;}
+  tbody tr:hover{background:var(--bg);}
+  .badge{
+    padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;
+    display:inline-flex;align-items:center;gap:5px;
+  }
+  .badge.entrada{background:var(--green-light);color:var(--green);}
+  .badge.salida{background:var(--red-light);color:var(--red);}
+  .foto-link{color:var(--blue);text-decoration:none;font-weight:600;font-size:12px;}
+  .foto-link:hover{text-decoration:underline;}
+  .muted-cell{color:var(--muted);}
+
+  .table-wrap{max-height:520px;overflow:auto;}
+
+  .empty{
+    padding:40px 10px;text-align:center;color:var(--muted);font-size:13px;
+  }
+
+  canvas{max-height:230px;}
+
+  footer{
+    text-align:center;color:var(--muted);font-size:11.5px;padding:20px 0 0;
+  }
+
+  @media (max-width:1100px){
+    .kpis{grid-template-columns:repeat(3,1fr);}
+    .grid{grid-template-columns:1fr;}
+  }
+  @media (max-width:640px){
+    .kpis{grid-template-columns:repeat(2,1fr);}
+  }
+
+  /* config modal */
+  .modal-bg{
+    position:fixed;inset:0;background:rgba(23,42,70,.5);
+    display:none;align-items:center;justify-content:center;z-index:50;
+  }
+  .modal-bg.open{display:flex;}
+  .modal{
+    background:#fff;border-radius:12px;padding:22px;width:420px;max-width:92vw;
+  }
+  .modal h4{margin:0 0 6px;font-size:15px;}
+  .modal p{margin:0 0 14px;font-size:12.5px;color:var(--muted);}
+  .modal input{
+    width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;font-size:13px;margin-bottom:12px;
+  }
+  .modal .actions{display:flex;justify-content:flex-end;gap:8px;}
+  .modal button{padding:8px 14px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:13px;}
+  .modal button.primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">🏠</div>
+    <div>
+      <h1>SSR Remodelaciones</h1>
+      <p>Control de Planillas — Entradas, salidas y costo de personal</p>
+    </div>
+  </div>
+  <div class="status">
+    <div class="datetime" id="fechaHora">—</div>
+    <div class="live"><span class="dot"></span> Datos en tiempo real</div>
+  </div>
+</header>
+
+<main>
+
+  <div class="kpis" id="kpis">
+    <!-- KPI cards se insertan por JS -->
+  </div>
+
+  <div class="filters">
+    <div class="field">
+      <label>Desde</label>
+      <input type="date" id="fDesde" />
+    </div>
+    <div class="field">
+      <label>Hasta</label>
+      <input type="date" id="fHasta" />
+    </div>
+    <div class="field">
+      <label>Trabajador</label>
+      <select id="fTrabajador"><option value="">Todos</option></select>
+    </div>
+    <div class="field">
+      <label>Proyecto</label>
+      <select id="fProyecto"><option value="">Todos</option></select>
+    </div>
+    <div class="field">
+      <label>Acción</label>
+      <select id="fAccion">
+        <option value="">Todas</option>
+        <option value="ENTRADA">Entradas</option>
+        <option value="SALIDA">Salidas</option>
+      </select>
+    </div>
+    <button id="btnLimpiar">Limpiar filtros</button>
+    <span class="config" id="btnConfig">⚙ Configurar fuente de datos</span>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h3>Registro de entradas y salidas</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha y hora</th>
+              <th>Acción</th>
+              <th>Trabajador</th>
+              <th>Teléfono</th>
+              <th>Proyecto</th>
+              <th>Detalle</th>
+              <th>Origen</th>
+              <th>Opciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaBody"></tbody>
+        </table>
+        <div class="empty" id="tablaVacia" style="display:none;">Sin registros para este filtro.</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h3>Actividad por día</h3>
+        <canvas id="chartDia"></canvas>
+      </div>
+      <div class="panel panel-sub">
+        <h3>Horas por trabajador (rango seleccionado)</h3>
+        <canvas id="chartTrabajador"></canvas>
+      </div>
+      <div class="panel panel-sub">
+        <h3>Proyectos con actividad</h3>
+        <canvas id="chartProyecto"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Fuente: ASISTENCIA_LOG (SSR ERP V13) · Actualización automática cada 60 segundos
+  </footer>
+
+</main>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h4>Fuente de datos</h4>
+    <p>Pega la URL de tu Web App de Apps Script (la misma que usa Sasha / finanzas.js). Se guarda en este navegador.</p>
+    <input type="text" id="inputUrl" placeholder="https://script.google.com/macros/s/AKfycb.../exec" />
+    <div class="actions">
+      <button id="btnCancelar">Cancelar</button>
+      <button class="primary" id="btnGuardarUrl">Guardar y recargar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+
+  var STORAGE_KEY = "ssr_dashboard_apps_script_url";
+  var DEFAULT_URL = "https://script.google.com/macros/s/AKfycbyMP4_cyxuB4oCNqh5SGZepnSujePha-tOcVOKbeo9y6BGOxhP-C86dT18JP0r0CvkkLQ/exec";
+
+  function getApiUrl(){
+    return localStorage.getItem(STORAGE_KEY) || DEFAULT_URL;
+  }
+
+  // ---------- Reloj del header ----------
+  function actualizarReloj(){
+    var ahora = new Date();
+    var opciones = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+    var fecha = ahora.toLocaleDateString('es-CR', opciones);
+    var hora = ahora.toLocaleTimeString('es-CR', { hour:'2-digit', minute:'2-digit' });
+    fecha = fecha.charAt(0).toUpperCase() + fecha.slice(1);
+    document.getElementById('fechaHora').innerHTML = fecha + '<br/>' + hora;
+  }
+  actualizarReloj();
+  setInterval(actualizarReloj, 30000);
+
+  // ---------- Charts ----------
+  var chartDia, chartTrabajador, chartProyecto;
+
+  function renderKpis(k){
+    var cards = [
+      { icon:'👥', color:'blue',   value:k.totalRegistros, label:'Total de registros', sub:'En el rango filtrado' },
+      { icon:'↪',  color:'green',  value:k.entradas,        label:'Entradas' },
+      { icon:'↩',  color:'red',    value:k.salidas,         label:'Salidas' },
+      { icon:'👷', color:'purple', value:k.trabajadoresUnicos, label:'Trabajadores únicos' },
+      { icon:'🏗', color:'orange', value:k.proyectosConActividad, label:'Proyectos con actividad' },
+      { icon:'⏱',  color:'blue',   value:k.horasRegistradas + ' h', label:'Horas registradas' }
+    ];
+
+    var html = '';
+    cards.forEach(function(c){
+      html += '<div class="kpi">' +
+        '<div class="icon ' + c.color + '">' + c.icon + '</div>' +
+        '<div class="value">' + c.value + '</div>' +
+        '<div class="label">' + c.label + '</div>' +
+        '</div>';
+    });
+    document.getElementById('kpis').innerHTML = html;
+  }
+
+  function renderTabla(registros){
+    var body = document.getElementById('tablaBody');
+    var vacio = document.getElementById('tablaVacia');
+
+    if (!registros.length){
+      body.innerHTML = '';
+      vacio.style.display = 'block';
+      return;
+    }
+    vacio.style.display = 'none';
+
+    var html = '';
+    registros.forEach(function(r){
+      var badgeClass = r.accion === 'ENTRADA' ? 'entrada' : 'salida';
+      var badgeIcon = r.accion === 'ENTRADA' ? '↪' : '↩';
+      var foto = r.fotoUrl
+        ? '<a class="foto-link" href="' + r.fotoUrl + '" target="_blank" rel="noopener">Ver foto</a>'
+        : '<span class="muted-cell">—</span>';
+
+      html += '<tr>' +
+        '<td>' + r.fechaHora + '</td>' +
+        '<td><span class="badge ' + badgeClass + '">' + badgeIcon + ' ' + (r.accion === 'ENTRADA' ? 'Entrada' : 'Salida') + '</span></td>' +
+        '<td>' + (r.trabajador || '—') + '</td>' +
+        '<td class="muted-cell">' + (r.telefono || '—') + '</td>' +
+        '<td>' + (r.proyecto || 'PENDIENTE') + '</td>' +
+        '<td class="muted-cell">' + (r.detalle || '—') + '</td>' +
+        '<td class="muted-cell">' + (r.origen || '—') + '</td>' +
+        '<td>' + foto + '</td>' +
+        '</tr>';
+    });
+
+    body.innerHTML = html;
+  }
+
+  function renderCharts(data){
+    var ctxDia = document.getElementById('chartDia').getContext('2d');
+    var ctxTrab = document.getElementById('chartTrabajador').getContext('2d');
+    var ctxProy = document.getElementById('chartProyecto').getContext('2d');
+
+    if (chartDia) chartDia.destroy();
+    if (chartTrabajador) chartTrabajador.destroy();
+    if (chartProyecto) chartProyecto.destroy();
+
+    chartDia = new Chart(ctxDia, {
+      type: 'bar',
+      data: {
+        labels: data.actividadPorDia.map(function(d){ return d.etiqueta; }),
+        datasets: [
+          { label:'Entradas', data:data.actividadPorDia.map(function(d){return d.entradas;}), backgroundColor:'#12A66A', borderRadius:4 },
+          { label:'Salidas',  data:data.actividadPorDia.map(function(d){return d.salidas;}),  backgroundColor:'#EB5757', borderRadius:4 }
+        ]
+      },
+      options: {
+        responsive:true,
+        plugins:{ legend:{ position:'top', labels:{ boxWidth:10, font:{size:11} } } },
+        scales:{ y:{ beginAtZero:true, ticks:{precision:0} } }
+      }
+    });
+
+    chartTrabajador = new Chart(ctxTrab, {
+      type: 'bar',
+      data: {
+        labels: data.horasPorTrabajador.map(function(t){ return t.trabajador; }),
+        datasets: [{ label:'Horas', data:data.horasPorTrabajador.map(function(t){return t.horas;}), backgroundColor:'#2F80ED', borderRadius:4 }]
+      },
+      options:{
+        indexAxis:'y',
+        responsive:true,
+        plugins:{ legend:{ display:false } },
+        scales:{ x:{ beginAtZero:true } }
+      }
+    });
+
+    chartProyecto = new Chart(ctxProy, {
+      type: 'bar',
+      data: {
+        labels: data.proyectosConActividad.map(function(p){ return p.proyecto; }),
+        datasets: [{ label:'Registros', data:data.proyectosConActividad.map(function(p){return p.cantidad;}), backgroundColor:'#F5A623', borderRadius:4 }]
+      },
+      options:{
+        indexAxis:'y',
+        responsive:true,
+        plugins:{ legend:{ display:false } },
+        scales:{ x:{ beginAtZero:true, ticks:{precision:0} } }
+      }
+    });
+  }
+
+  function poblarFiltros(filtros){
+    var selTrab = document.getElementById('fTrabajador');
+    var selProy = document.getElementById('fProyecto');
+    var valTrab = selTrab.value;
+    var valProy = selProy.value;
+
+    selTrab.innerHTML = '<option value="">Todos</option>' +
+      filtros.trabajadores.map(function(t){ return '<option value="'+t+'">'+t+'</option>'; }).join('');
+    selProy.innerHTML = '<option value="">Todos</option>' +
+      filtros.proyectos.map(function(p){ return '<option value="'+p+'">'+p+'</option>'; }).join('');
+
+    selTrab.value = valTrab;
+    selProy.value = valProy;
+  }
+
+  function aplicarFiltrosLocal(registros){
+    var trab = document.getElementById('fTrabajador').value;
+    var proy = document.getElementById('fProyecto').value;
+    var accion = document.getElementById('fAccion').value;
+
+    return registros.filter(function(r){
+      if (trab && r.trabajador !== trab) return false;
+      if (proy && r.proyecto !== proy) return false;
+      if (accion && r.accion !== accion) return false;
+      return true;
+    });
+  }
+
+  var ultimaData = null;
+
+  function cargar(){
+    var desde = document.getElementById('fDesde').value;
+    var hasta = document.getElementById('fHasta').value;
+
+    var url = getApiUrl() + '?accion=dashboard_asistencia';
+    if (desde) url += '&desde=' + desde;
+    if (hasta) url += '&hasta=' + hasta;
+
+    fetch(url)
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if (data.status !== 'ok'){
+          console.error('Error del servidor:', data.error);
+          return;
+        }
+
+        ultimaData = data;
+
+        if (!desde) document.getElementById('fDesde').value = data.rango.desde;
+        if (!hasta) document.getElementById('fHasta').value = data.rango.hasta;
+
+        poblarFiltros(data.filtros);
+
+        var registrosFiltrados = aplicarFiltrosLocal(data.registros);
+
+        renderKpis(data.kpis);
+        renderTabla(registrosFiltrados);
+        renderCharts(data);
+      })
+      .catch(function(err){
+        console.error('No se pudo conectar con el Apps Script:', err);
+      });
+  }
+
+  document.getElementById('fDesde').addEventListener('change', cargar);
+  document.getElementById('fHasta').addEventListener('change', cargar);
+  document.getElementById('fTrabajador').addEventListener('change', function(){
+    if (ultimaData) renderTabla(aplicarFiltrosLocal(ultimaData.registros));
+  });
+  document.getElementById('fProyecto').addEventListener('change', function(){
+    if (ultimaData) renderTabla(aplicarFiltrosLocal(ultimaData.registros));
+  });
+  document.getElementById('fAccion').addEventListener('change', function(){
+    if (ultimaData) renderTabla(aplicarFiltrosLocal(ultimaData.registros));
+  });
+  document.getElementById('btnLimpiar').addEventListener('click', function(){
+    document.getElementById('fDesde').value = '';
+    document.getElementById('fHasta').value = '';
+    document.getElementById('fTrabajador').value = '';
+    document.getElementById('fProyecto').value = '';
+    document.getElementById('fAccion').value = '';
+    cargar();
+  });
+
+  // ---------- Config modal ----------
+  var modalBg = document.getElementById('modalBg');
+  document.getElementById('btnConfig').addEventListener('click', function(){
+    document.getElementById('inputUrl').value = getApiUrl();
+    modalBg.classList.add('open');
+  });
+  document.getElementById('btnCancelar').addEventListener('click', function(){
+    modalBg.classList.remove('open');
+  });
+  document.getElementById('btnGuardarUrl').addEventListener('click', function(){
+    var val = document.getElementById('inputUrl').value.trim();
+    if (val) localStorage.setItem(STORAGE_KEY, val);
+    modalBg.classList.remove('open');
+    cargar();
+  });
+
+  cargar();
+  setInterval(cargar, 60000);
+
+})();
+</script>
+
+</body>
+</html>
