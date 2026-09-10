@@ -434,13 +434,43 @@
       </div>
     </div>
   </div>
+
+  <div class="panel panel-sub">
+    <h3>Subcontratos</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Fecha</th><th>Subcontratista</th><th>Descripción</th><th>Monto</th></tr></thead>
+        <tbody id="fichaSubcontratosBody"></tbody>
+      </table>
+      <div class="empty" id="fichaSubcontratosVacio" style="display:none;">Sin subcontratos registrados para este proyecto.</div>
+    </div>
+  </div>
 </div><!-- /viewFicha -->
 
 
 <div id="viewDashboard" class="view">
-  <div class="placeholder-view">
-    <div class="titulo">Dashboard ejecutivo — pendiente de conectar</div>
-    <p>Esta vista reproduce alertas inteligentes, "proyecto más rentable/caro" y otras reglas que hoy viven en <code>07_DASHBOARDS_V13.gs</code> / <code>11_DASHBOARD_EJECUTIVO_V13.gs</code>. Pasame esos archivos (o decime que arme una versión simplificada con las mismas cifras pero sin esas reglas) y lo conecto igual que Ficha, Caja y Gastos Operativos.</p>
+  <div class="panel" style="margin-bottom:18px;">
+    <p id="dashboardEstado" style="font-size:12.5px;color:var(--muted);margin:0;">Cargando…</p>
+  </div>
+
+  <div class="resumen-fila" id="dashboardKpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:18px;"></div>
+
+  <div class="resumen-fila" id="dashboardDestacados" style="grid-template-columns:repeat(3,1fr);margin-bottom:18px;"></div>
+
+  <div class="grid">
+    <div class="panel">
+      <h3>Top 10 proyectos por utilidad</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Código</th><th>Proyecto</th><th>Ingresos</th><th>Costo</th><th>Utilidad</th><th>Margen</th></tr></thead>
+          <tbody id="dashboardTop10Body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Distribución de costos</h3>
+      <div id="dashboardDistribucion"></div>
+    </div>
   </div>
 </div><!-- /viewDashboard -->
 
@@ -464,12 +494,24 @@
 
 
 <div id="viewGastos" class="view">
-  <div class="panel" style="margin-bottom:18px;">
+  <div class="panel" style="margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
     <div class="resumen-item" style="max-width:260px;">
-      <div class="lbl">Total gastos operativos (SSR)</div>
+      <div class="lbl" id="gastosTotalLbl">Total gastos operativos (SSR)</div>
       <div class="val" id="gastosTotal">—</div>
     </div>
+    <div class="field">
+      <label style="font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:4px;">Ver mes</label>
+      <select class="proyecto-select" id="gastosMesSelect" style="min-width:200px;">
+        <option value="">Todos los meses</option>
+      </select>
+    </div>
   </div>
+
+  <div class="panel" style="margin-bottom:18px;">
+    <h3>Gastos operativos por mes</h3>
+    <canvas id="chartGastosMes" style="max-height:220px;"></canvas>
+  </div>
+
   <div class="panel" style="margin-bottom:18px;">
     <h3>Por categoría</h3>
     <div id="gastosCategorias"></div>
@@ -950,6 +992,7 @@
         if (vista === 'ficha') cargarFicha();
         if (vista === 'caja') cargarCaja();
         if (vista === 'gastos') cargarGastosOperativos();
+        if (vista === 'dashboard') cargarDashboardEjecutivo();
       }
     });
   });
@@ -1016,6 +1059,16 @@
             return '<tr><td>'+(r.fecha||'')+'</td><td>'+(r.tipo||'')+'</td><td>'+(r.descripcion||'')+'</td><td>'+(r.proveedor||'')+'</td><td>'+formatoColones(r.monto)+'</td></tr>';
           }).join('');
         }
+
+        var subB = document.getElementById('fichaSubcontratosBody');
+        var subV = document.getElementById('fichaSubcontratosVacio');
+        if (!data.subcontratos.length){ subB.innerHTML=''; subV.style.display='block'; }
+        else {
+          subV.style.display='none';
+          subB.innerHTML = data.subcontratos.map(function(r){
+            return '<tr><td>'+(r.fecha||'')+'</td><td>'+(r.subcontratista||'')+'</td><td>'+(r.descripcion||'')+'</td><td>'+formatoColones(r.monto)+'</td></tr>';
+          }).join('');
+        }
       })
       .catch(function(err){ console.error('cargarFicha:', err); });
   }
@@ -1051,12 +1104,20 @@
 
   // ---------- GASTOS OPERATIVOS ----------
 
-  function cargarGastosOperativos(){
-    fetch(getApiUrl() + '?accion=gastos_operativos')
+  var chartGastosMes = null;
+  var gastosMesSelectPoblado = false;
+
+  function cargarGastosOperativos(mes){
+    var url = getApiUrl() + '?accion=gastos_operativos' + (mes ? '&mes=' + encodeURIComponent(mes) : '');
+
+    fetch(url)
       .then(function(res){ return res.json(); })
       .then(function(data){
         if (data.status !== 'ok') return;
 
+        document.getElementById('gastosTotalLbl').textContent = mes
+          ? 'Total gastos operativos (SSR) — ' + (data.porMes.filter(function(m){return m.mes===mes;})[0] || {}).etiqueta
+          : 'Total gastos operativos (SSR) — todos los meses';
         document.getElementById('gastosTotal').textContent = formatoColones(data.total);
 
         var maxCat = Math.max.apply(null, data.categorias.map(function(c){ return c.total; }).concat([1]));
@@ -1069,15 +1130,96 @@
 
         var body = document.getElementById('gastosBody');
         var vacio = document.getElementById('gastosVacio');
-        if (!data.movimientos.length){ body.innerHTML=''; vacio.style.display='block'; return; }
-        vacio.style.display='none';
+        if (!data.movimientos.length){ body.innerHTML=''; vacio.style.display='block'; }
+        else {
+          vacio.style.display='none';
+          body.innerHTML = data.movimientos.map(function(m){
+            return '<tr><td>'+m.fecha+'</td><td>'+m.categoria+'</td><td>'+m.descripcion+'</td>'+
+              '<td>'+m.responsable+'</td><td>'+formatoColones(m.monto)+'</td></tr>';
+          }).join('');
+        }
 
-        body.innerHTML = data.movimientos.map(function(m){
-          return '<tr><td>'+m.fecha+'</td><td>'+m.categoria+'</td><td>'+m.descripcion+'</td>'+
-            '<td>'+m.responsable+'</td><td>'+formatoColones(m.monto)+'</td></tr>';
-        }).join('');
+        // Selector de mes y gráfica: se pueblan una sola vez con el
+        // desglose completo que siempre viene en data.porMes, sin
+        // importar qué mes esté seleccionado.
+        if (!gastosMesSelectPoblado){
+          gastosMesSelectPoblado = true;
+          var sel = document.getElementById('gastosMesSelect');
+          data.porMes.forEach(function(m){
+            var opt = document.createElement('option');
+            opt.value = m.mes;
+            opt.textContent = m.etiqueta;
+            sel.appendChild(opt);
+          });
+          sel.addEventListener('change', function(){ cargarGastosOperativos(sel.value); });
+
+          if (typeof Chart !== 'undefined'){
+            var ctx = document.getElementById('chartGastosMes').getContext('2d');
+            chartGastosMes = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: data.porMes.map(function(m){ return m.etiqueta; }),
+                datasets: [{ label:'Gastos operativos', data:data.porMes.map(function(m){return m.total;}), backgroundColor:'#2F80ED', borderRadius:4 }]
+              },
+              options: {
+                responsive:true,
+                plugins:{ legend:{ display:false } },
+                scales:{ y:{ beginAtZero:true } }
+              }
+            });
+          }
+        }
       })
       .catch(function(err){ console.error('cargarGastosOperativos:', err); });
+  }
+
+  // ---------- DASHBOARD EJECUTIVO ----------
+
+  function cargarDashboardEjecutivo(){
+    fetch(getApiUrl() + '?accion=dashboard_ejecutivo')
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if (data.status !== 'ok'){
+          document.getElementById('dashboardEstado').textContent = data.error || 'No se pudo cargar.';
+          return;
+        }
+
+        document.getElementById('dashboardEstado').textContent = data.nota || '';
+
+        var k = data.kpis;
+        var kpiItems = [
+          ['Caja BAC CRC', formatoColones(k.cajaCRC)], ['Caja BAC USD', '$' + formatoHoras(k.cajaUSD)],
+          ['Ingresos', formatoColones(k.ingresos)], ['Costos totales', formatoColones(k.costos)],
+          ['Utilidad acumulada', formatoColones(k.utilidad)], ['Margen global', formatoHoras(k.margen) + '%'],
+          ['Pendiente por cobrar', formatoColones(k.pendienteCobrar)], ['Proyectos', k.proyectos + ' (' + k.activos + ' activos, ' + k.terminados + ' terminados)']
+        ];
+        document.getElementById('dashboardKpis').innerHTML = kpiItems.map(function(it){
+          return '<div class="resumen-item"><div class="lbl">'+it[0]+'</div><div class="val">'+it[1]+'</div></div>';
+        }).join('');
+
+        var d = data.destacados;
+        var destacados = [];
+        if (d.masRentable) destacados.push(['Proyecto más rentable', d.masRentable.codigo + ' — ' + formatoColones(d.masRentable.utilidad)]);
+        if (d.masCaro) destacados.push(['Proyecto más caro', d.masCaro.codigo + ' — ' + formatoColones(d.masCaro.costoTotal)]);
+        if (d.mayorDeuda) destacados.push(['Mayor deuda pendiente', (d.mayorDeuda.cliente || d.mayorDeuda.codigo) + ' — ' + formatoColones(d.mayorDeuda.pendiente)]);
+        document.getElementById('dashboardDestacados').innerHTML = destacados.map(function(it){
+          return '<div class="resumen-item"><div class="lbl">'+it[0]+'</div><div class="val" style="font-size:14px;">'+it[1]+'</div></div>';
+        }).join('');
+
+        document.getElementById('dashboardTop10Body').innerHTML = data.top10.map(function(p){
+          return '<tr><td>'+p.codigo+'</td><td>'+p.nombre+'</td><td>'+formatoColones(p.ingresos)+'</td>'+
+            '<td>'+formatoColones(p.costoTotal)+'</td><td>'+formatoColones(p.utilidad)+'</td><td>'+formatoHoras(p.margen)+'%</td></tr>';
+        }).join('');
+
+        var maxDist = Math.max.apply(null, data.distribucionCostos.map(function(c){ return c.total; }).concat([1]));
+        document.getElementById('dashboardDistribucion').innerHTML = data.distribucionCostos.map(function(c){
+          var pct = Math.round((c.total / maxDist) * 100);
+          return '<div class="cat-bar-row"><div class="cat-nombre">'+c.categoria+'</div>'+
+            '<div class="cat-bar-track"><div class="cat-bar-fill" style="width:'+pct+'%;"></div></div>'+
+            '<div class="cat-bar-monto">'+formatoColones(c.total)+'</div></div>';
+        }).join('');
+      })
+      .catch(function(err){ console.error('cargarDashboardEjecutivo:', err); });
   }
 
 })();
