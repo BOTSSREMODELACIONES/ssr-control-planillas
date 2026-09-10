@@ -530,9 +530,26 @@
 
 
 <div id="viewAguinaldo" class="view">
-  <div class="placeholder-view">
-    <div class="titulo">RRHH — Aguinaldo — pendiente de conectar</div>
-    <p>Tu hoja de aguinaldo hace <code>VLOOKUP</code> contra una hoja <strong>TRABAJADORES</strong> (rol, cédula, teléfono) que todavía no vi. Pasame esa hoja (o decime los nombres exactos de sus columnas) y conecto esta vista calculando el total ganado del año desde <code>BASE_PLANILLA</code> igual que tu hoja actual.</p>
+  <div class="panel" style="margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+    <label style="font-size:12px;color:var(--muted);font-weight:600;">Año</label>
+    <select class="proyecto-select" id="aguinaldoAnioSelect" style="min-width:120px;"></select>
+    <div class="resumen-item" style="max-width:220px;"><div class="lbl">Total ganado (año)</div><div class="val" id="aguinaldoTotalGanado">—</div></div>
+    <div class="resumen-item" style="max-width:220px;"><div class="lbl">Total aguinaldo a pagar</div><div class="val" id="aguinaldoTotalPagar">—</div></div>
+  </div>
+
+  <div class="panel" id="aguinaldoPendientesPanel" style="display:none;margin-bottom:18px;background:var(--orange-light);border-color:var(--orange);">
+    <h3 style="color:var(--orange);margin:0 0 6px;">⚠ Pendiente</h3>
+    <p style="margin:0;font-size:12.5px;" id="aguinaldoPendientesTexto"></p>
+  </div>
+
+  <div class="panel">
+    <h3>Cálculo de aguinaldo</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Trabajador</th><th>Rol</th><th>Total ganado año</th><th>Aguinaldo (1/12)</th></tr></thead>
+        <tbody id="aguinaldoBody"></tbody>
+      </table>
+    </div>
   </div>
 </div><!-- /viewAguinaldo -->
 
@@ -993,6 +1010,7 @@
         if (vista === 'caja') cargarCaja();
         if (vista === 'gastos') cargarGastosOperativos();
         if (vista === 'dashboard') cargarDashboardEjecutivo();
+        if (vista === 'aguinaldo') cargarAguinaldo();
       }
     });
   });
@@ -1220,6 +1238,52 @@
         }).join('');
       })
       .catch(function(err){ console.error('cargarDashboardEjecutivo:', err); });
+  }
+
+  // ---------- RRHH — AGUINALDO ----------
+
+  var aguinaldoAnioSelectPoblado = false;
+
+  function cargarAguinaldo(anio){
+    var url = getApiUrl() + '?accion=aguinaldo' + (anio ? '&anio=' + encodeURIComponent(anio) : '');
+
+    fetch(url)
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if (data.status !== 'ok') return;
+
+        if (!aguinaldoAnioSelectPoblado){
+          aguinaldoAnioSelectPoblado = true;
+          var sel = document.getElementById('aguinaldoAnioSelect');
+          var actual = data.anio;
+          [actual - 1, actual, actual + 1].forEach(function(a){
+            var opt = document.createElement('option');
+            opt.value = a;
+            opt.textContent = a;
+            if (a === actual) opt.selected = true;
+            sel.appendChild(opt);
+          });
+          sel.addEventListener('change', function(){ cargarAguinaldo(sel.value); });
+        }
+
+        document.getElementById('aguinaldoTotalGanado').textContent = formatoColones(data.totalGanadoAnio);
+        document.getElementById('aguinaldoTotalPagar').textContent = formatoColones(data.totalAguinaldo);
+
+        var pendPanel = document.getElementById('aguinaldoPendientesPanel');
+        if (data.pendientes.length){
+          pendPanel.style.display = 'block';
+          document.getElementById('aguinaldoPendientesTexto').textContent =
+            data.pendientes.join(', ') + ' — sin rol registrado en BASE_PLANILLA. Verificá si corresponden a trabajadores válidos y agregales rol para futuros cálculos.';
+        } else {
+          pendPanel.style.display = 'none';
+        }
+
+        document.getElementById('aguinaldoBody').innerHTML = data.trabajadores.map(function(t){
+          return '<tr><td>'+t.trabajador+'</td><td>'+(t.rol || '—')+'</td>'+
+            '<td>'+formatoColones(t.totalGanadoAnio)+'</td><td>'+formatoColones(t.aguinaldo)+'</td></tr>';
+        }).join('');
+      })
+      .catch(function(err){ console.error('cargarAguinaldo:', err); });
   }
 
 })();
