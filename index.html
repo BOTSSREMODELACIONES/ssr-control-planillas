@@ -304,6 +304,9 @@
       <h3 style="margin:0;">💰 Control de Pagos — Vales y pago final</h3>
       <div style="display:flex;gap:10px;align-items:center;">
         <select id="pagosMes" style="padding:7px 10px;border:1px solid var(--border);border-radius:7px;font-size:13px;"></select>
+        <select id="pagosTrabajador" style="padding:7px 10px;border:1px solid var(--border);border-radius:7px;font-size:13px;min-width:160px;">
+          <option value="">Todos los trabajadores</option>
+        </select>
         <div id="pagosSemanas" style="display:flex;gap:6px;"></div>
       </div>
     </div>
@@ -600,6 +603,7 @@
   var MESES_ES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
   var pagosDataActual = null;
   var semanaSeleccionada = null;
+  var semanaCompletaActual = null;
 
   function formatoColones(n){
     return '₡' + Math.round(n || 0).toLocaleString('es-CR');
@@ -666,10 +670,38 @@
     });
 
     var semana = semanas.filter(function(s){ return s.numero === semanaSeleccionada; })[0];
+    semanaCompletaActual = semana;
+    renderFiltroTrabajador(semana);
     renderTablaPagos(semana);
   }
 
-  function renderTablaPagos(semana){
+  function renderFiltroTrabajador(semana){
+    var sel = document.getElementById('pagosTrabajador');
+    var valorActual = sel.value;
+
+    var nombres = [];
+    (semana ? semana.trabajadores : []).forEach(function(t){
+      if (nombres.indexOf(t.nombre) === -1) nombres.push(t.nombre);
+    });
+    nombres.sort();
+
+    sel.innerHTML = '<option value="">Todos los trabajadores</option>' +
+      nombres.map(function(n){
+        return '<option value="'+n+'"'+(n===valorActual?' selected':'')+'>'+n+'</option>';
+      }).join('');
+  }
+
+  function renderTablaPagos(semanaCompleta){
+    var filtroTrabajador = document.getElementById('pagosTrabajador').value;
+    var semana = semanaCompleta;
+
+    if (semana && filtroTrabajador){
+      semana = {
+        numero: semana.numero,
+        trabajadores: semana.trabajadores.filter(function(t){ return t.nombre === filtroTrabajador; }),
+        totales: null // se recalcula abajo sumando solo lo filtrado
+      };
+    }
     var body = document.getElementById('pagosBody');
     var vacio = document.getElementById('pagosVacio');
     var totalesFila = document.getElementById('pagosTotales');
@@ -699,7 +731,13 @@
         '</tr>';
     }).join('');
 
-    var tot = semana.totales || {totalHoras:0,bruto:0,vales:0,neto:0};
+    var tot = semana.totales || semana.trabajadores.reduce(function(acc, t){
+      acc.totalHoras += t.totalHoras || 0;
+      acc.bruto += t.bruto || 0;
+      acc.vales += t.vales || 0;
+      acc.neto += t.neto || 0;
+      return acc;
+    }, {totalHoras:0,bruto:0,vales:0,neto:0});
     totalesFila.innerHTML =
       '<td>TOTALES SEMANA ' + semana.numero + '</td>' +
       '<td></td>' +
@@ -718,7 +756,12 @@
 
   document.getElementById('pagosMes').addEventListener('change', function(){
     semanaSeleccionada = null;
+    document.getElementById('pagosTrabajador').value = '';
     cargarPagos(this.value);
+  });
+
+  document.getElementById('pagosTrabajador').addEventListener('change', function(){
+    renderTablaPagos(semanaCompletaActual);
   });
 
   cargarPagos();
