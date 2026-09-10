@@ -212,6 +212,46 @@
   .modal .actions{display:flex;justify-content:flex-end;gap:8px;}
   .modal button{padding:8px 14px;border-radius:7px;border:1px solid var(--border);cursor:pointer;font-size:13px;}
   .modal button.primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+  /* ---------- NAV DE PESTAÑAS (panel único) ---------- */
+  .navtabs{
+    display:flex;gap:6px;flex-wrap:wrap;
+    background:var(--white);border:1px solid var(--border);border-radius:10px;
+    padding:6px;margin-bottom:20px;
+  }
+  .navtab{
+    padding:9px 16px;border-radius:8px;border:none;background:transparent;
+    color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;
+    display:flex;align-items:center;gap:7px;
+  }
+  .navtab:hover{background:var(--bg);color:var(--text);}
+  .navtab.activa{background:var(--navy);color:#fff;}
+  .view{display:none;}
+  .view.activa{display:block;}
+
+  .proyecto-select{
+    padding:9px 12px;border:1px solid var(--border);border-radius:7px;
+    font-size:13.5px;background:#fff;color:var(--text);min-width:280px;font-weight:600;
+  }
+  .resumen-fila{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:18px;}
+  .resumen-item{
+    background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:12px 14px;
+  }
+  .resumen-item .lbl{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.02em;}
+  .resumen-item .val{font-size:18px;font-weight:700;margin-top:4px;}
+  .semaforo{
+    padding:4px 12px;border-radius:20px;font-size:11.5px;font-weight:700;display:inline-block;
+  }
+  .semaforo.SALUDABLE{background:var(--green-light);color:var(--green);}
+  .semaforo.ATENCION{background:var(--orange-light);color:var(--orange);}
+  .semaforo.RIESGO{background:var(--red-light);color:var(--red);}
+  .cat-bar-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #EEF2F8;}
+  .cat-bar-row .cat-nombre{width:210px;font-size:12.5px;font-weight:600;flex-shrink:0;}
+  .cat-bar-track{flex:1;background:var(--bg);border-radius:6px;height:16px;overflow:hidden;}
+  .cat-bar-fill{background:var(--blue);height:100%;border-radius:6px;}
+  .cat-bar-monto{width:110px;text-align:right;font-size:12.5px;font-weight:700;flex-shrink:0;}
+  .placeholder-view{padding:60px 20px;text-align:center;color:var(--muted);}
+  .placeholder-view .titulo{font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px;}
 </style>
 </head>
 <body>
@@ -231,6 +271,17 @@
 </header>
 
 <main>
+
+  <div class="navtabs" id="navtabs">
+    <button class="navtab activa" data-view="asistencia">🕐 Asistencia / Planillas</button>
+    <button class="navtab" data-view="ficha">📋 Ficha de Proyecto</button>
+    <button class="navtab" data-view="dashboard">📊 Dashboard</button>
+    <button class="navtab" data-view="caja">💰 Caja General</button>
+    <button class="navtab" data-view="gastos">⛽ Gastos Operativos</button>
+    <button class="navtab" data-view="aguinaldo">🎁 RRHH — Aguinaldo</button>
+  </div>
+
+<div id="viewAsistencia" class="view activa">
 
   <div class="kpis" id="kpis">
     <!-- KPI cards se insertan por JS -->
@@ -344,6 +395,104 @@
   <footer>
     Fuente: ASISTENCIA_LOG (SSR ERP V13) · Actualización automática cada 60 segundos
   </footer>
+
+</div><!-- /viewAsistencia -->
+
+
+<div id="viewFicha" class="view">
+  <div class="panel" style="margin-bottom:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+    <label style="font-size:12px;color:var(--muted);font-weight:600;">Proyecto</label>
+    <select class="proyecto-select" id="fichaSelect"></select>
+    <span class="semaforo" id="fichaSemaforo" style="display:none;"></span>
+  </div>
+
+  <div class="panel" id="fichaResumenPanel">
+    <h3 id="fichaTitulo">Cargando…</h3>
+    <p id="fichaSubtitulo" style="font-size:12.5px;color:var(--muted);margin:0 0 16px;"></p>
+    <div class="resumen-fila" id="fichaResumen"></div>
+  </div>
+
+  <div class="grid" style="margin-top:18px;">
+    <div class="panel">
+      <h3>Historial de ingresos</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fecha</th><th>Cliente</th><th>Descripción</th><th>Monto</th><th>Forma pago</th></tr></thead>
+          <tbody id="fichaIngresosBody"></tbody>
+        </table>
+        <div class="empty" id="fichaIngresosVacio" style="display:none;">Sin ingresos registrados.</div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Historial de gastos del proyecto</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fecha</th><th>Tipo</th><th>Descripción</th><th>Proveedor</th><th>Monto</th></tr></thead>
+          <tbody id="fichaGastosBody"></tbody>
+        </table>
+        <div class="empty" id="fichaGastosVacio" style="display:none;">Sin gastos registrados.</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /viewFicha -->
+
+
+<div id="viewDashboard" class="view">
+  <div class="placeholder-view">
+    <div class="titulo">Dashboard ejecutivo — pendiente de conectar</div>
+    <p>Esta vista reproduce alertas inteligentes, "proyecto más rentable/caro" y otras reglas que hoy viven en <code>07_DASHBOARDS_V13.gs</code> / <code>11_DASHBOARD_EJECUTIVO_V13.gs</code>. Pasame esos archivos (o decime que arme una versión simplificada con las mismas cifras pero sin esas reglas) y lo conecto igual que Ficha, Caja y Gastos Operativos.</p>
+  </div>
+</div><!-- /viewDashboard -->
+
+
+<div id="viewCaja" class="view">
+  <div class="panel" style="margin-bottom:18px;display:flex;gap:24px;flex-wrap:wrap;">
+    <div><div class="resumen-item"><div class="lbl">Saldo BAC CRC</div><div class="val" id="cajaSaldoCRC">—</div></div></div>
+    <div><div class="resumen-item"><div class="lbl">Saldo BAC USD</div><div class="val" id="cajaSaldoUSD">—</div></div></div>
+  </div>
+  <div class="panel">
+    <h3>Registro de movimientos</h3>
+    <div class="table-wrap" style="max-height:640px;">
+      <table>
+        <thead><tr><th>Fecha</th><th>Tipo</th><th>Proyecto</th><th>Descripción</th><th>Entrada</th><th>Salida</th><th>Responsable</th></tr></thead>
+        <tbody id="cajaBody"></tbody>
+      </table>
+      <div class="empty" id="cajaVacio" style="display:none;">Sin movimientos.</div>
+    </div>
+  </div>
+</div><!-- /viewCaja -->
+
+
+<div id="viewGastos" class="view">
+  <div class="panel" style="margin-bottom:18px;">
+    <div class="resumen-item" style="max-width:260px;">
+      <div class="lbl">Total gastos operativos (SSR)</div>
+      <div class="val" id="gastosTotal">—</div>
+    </div>
+  </div>
+  <div class="panel" style="margin-bottom:18px;">
+    <h3>Por categoría</h3>
+    <div id="gastosCategorias"></div>
+  </div>
+  <div class="panel">
+    <h3>Detalle</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Fecha</th><th>Categoría</th><th>Descripción</th><th>Responsable</th><th>Monto</th></tr></thead>
+        <tbody id="gastosBody"></tbody>
+      </table>
+      <div class="empty" id="gastosVacio" style="display:none;">Sin gastos operativos en este rango.</div>
+    </div>
+  </div>
+</div><!-- /viewGastos -->
+
+
+<div id="viewAguinaldo" class="view">
+  <div class="placeholder-view">
+    <div class="titulo">RRHH — Aguinaldo — pendiente de conectar</div>
+    <p>Tu hoja de aguinaldo hace <code>VLOOKUP</code> contra una hoja <strong>TRABAJADORES</strong> (rol, cédula, teléfono) que todavía no vi. Pasame esa hoja (o decime los nombres exactos de sus columnas) y conecto esta vista calculando el total ganado del año desde <code>BASE_PLANILLA</code> igual que tu hoja actual.</p>
+  </div>
+</div><!-- /viewAguinaldo -->
 
 </main>
 
@@ -775,6 +924,161 @@
 
   cargarPagos();
   setInterval(function(){ cargarPagos(pagosDataActual ? pagosDataActual.mes : null); }, 60000);
+
+  // ==========================================================
+  // NAVEGACIÓN POR PESTAÑAS (panel único)
+  // ==========================================================
+
+  var vistasCargadas = {}; // evita recargar datos cada vez que se toca una pestaña
+
+  document.querySelectorAll('.navtab').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var vista = btn.getAttribute('data-view');
+
+      document.querySelectorAll('.navtab').forEach(function(b){ b.classList.remove('activa'); });
+      btn.classList.add('activa');
+
+      document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('activa'); });
+      var mapaId = {
+        asistencia:'viewAsistencia', ficha:'viewFicha', dashboard:'viewDashboard',
+        caja:'viewCaja', gastos:'viewGastos', aguinaldo:'viewAguinaldo'
+      };
+      document.getElementById(mapaId[vista]).classList.add('activa');
+
+      if (!vistasCargadas[vista]) {
+        vistasCargadas[vista] = true;
+        if (vista === 'ficha') cargarFicha();
+        if (vista === 'caja') cargarCaja();
+        if (vista === 'gastos') cargarGastosOperativos();
+      }
+    });
+  });
+
+  // ---------- FICHA DE PROYECTO ----------
+
+  function cargarFicha(codigo){
+    var url = getApiUrl() + '?accion=ficha_proyecto' + (codigo ? '&codigo=' + encodeURIComponent(codigo) : '');
+
+    fetch(url)
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if (data.status !== 'ok'){
+          document.getElementById('fichaTitulo').textContent = data.error || 'No se pudo cargar.';
+          return;
+        }
+
+        var sel = document.getElementById('fichaSelect');
+        if (!sel.options.length){
+          sel.innerHTML = data.proyectos_disponibles.map(function(p){
+            return '<option value="'+p.codigo+'">'+p.codigo+' — '+(p.nombre||'')+'</option>';
+          }).join('');
+          sel.value = data.proyecto.codigo;
+          sel.addEventListener('change', function(){ cargarFicha(sel.value); });
+        } else {
+          sel.value = data.proyecto.codigo;
+        }
+
+        var p = data.proyecto;
+        document.getElementById('fichaTitulo').textContent = p.codigo + ' — ' + (p.nombre || '');
+        document.getElementById('fichaSubtitulo').textContent = 'Cliente: ' + (p.cliente || '—') + ' · Estado: ' + (p.estado || '—');
+
+        var semEl = document.getElementById('fichaSemaforo');
+        semEl.style.display = 'inline-block';
+        semEl.className = 'semaforo ' + p.semaforo;
+        semEl.textContent = p.semaforo;
+
+        var items = [
+          ['Contrato', p.contrato], ['Cobrado', p.cobrado], ['Pendiente', p.pendiente],
+          ['Planilla', p.planilla], ['Gastos', p.gastos], ['Subcontratos', p.subcontratos],
+          ['Costo total', p.costoTotal], ['Utilidad', p.utilidad], ['Margen', formatoHoras(p.margen) + '%']
+        ];
+        document.getElementById('fichaResumen').innerHTML = items.map(function(it){
+          var val = typeof it[1] === 'number' ? formatoColones(it[1]) : it[1];
+          return '<div class="resumen-item"><div class="lbl">'+it[0]+'</div><div class="val">'+val+'</div></div>';
+        }).join('');
+
+        var ingB = document.getElementById('fichaIngresosBody');
+        var ingV = document.getElementById('fichaIngresosVacio');
+        if (!data.ingresos.length){ ingB.innerHTML=''; ingV.style.display='block'; }
+        else {
+          ingV.style.display='none';
+          ingB.innerHTML = data.ingresos.map(function(r){
+            return '<tr><td>'+(r.fecha||'')+'</td><td>'+(r.cliente||'')+'</td><td>'+(r.descripcion||'')+'</td><td>'+formatoColones(r.monto)+'</td><td>'+(r.forma||'')+'</td></tr>';
+          }).join('');
+        }
+
+        var gasB = document.getElementById('fichaGastosBody');
+        var gasV = document.getElementById('fichaGastosVacio');
+        if (!data.gastos.length){ gasB.innerHTML=''; gasV.style.display='block'; }
+        else {
+          gasV.style.display='none';
+          gasB.innerHTML = data.gastos.map(function(r){
+            return '<tr><td>'+(r.fecha||'')+'</td><td>'+(r.tipo||'')+'</td><td>'+(r.descripcion||'')+'</td><td>'+(r.proveedor||'')+'</td><td>'+formatoColones(r.monto)+'</td></tr>';
+          }).join('');
+        }
+      })
+      .catch(function(err){ console.error('cargarFicha:', err); });
+  }
+
+  // ---------- CAJA GENERAL ----------
+
+  function cargarCaja(){
+    fetch(getApiUrl() + '?accion=caja_general')
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if (data.status !== 'ok') return;
+
+        document.getElementById('cajaSaldoCRC').textContent = formatoColones(data.saldoCRC);
+        document.getElementById('cajaSaldoUSD').textContent = '$' + formatoHoras(data.saldoUSD);
+
+        var body = document.getElementById('cajaBody');
+        var vacio = document.getElementById('cajaVacio');
+        if (!data.movimientos.length){ body.innerHTML=''; vacio.style.display='block'; return; }
+        vacio.style.display='none';
+
+        body.innerHTML = data.movimientos.map(function(m){
+          var badgeClass = m.entrada > 0 ? 'entrada' : 'salida';
+          return '<tr><td>'+m.fecha+'</td>'+
+            '<td><span class="badge '+badgeClass+'">'+m.tipo+'</span></td>'+
+            '<td>'+m.proyecto+'</td><td>'+m.descripcion+'</td>'+
+            '<td>'+(m.entrada ? formatoColones(m.entrada) : '—')+'</td>'+
+            '<td>'+(m.salida ? formatoColones(m.salida) : '—')+'</td>'+
+            '<td>'+m.responsable+'</td></tr>';
+        }).join('');
+      })
+      .catch(function(err){ console.error('cargarCaja:', err); });
+  }
+
+  // ---------- GASTOS OPERATIVOS ----------
+
+  function cargarGastosOperativos(){
+    fetch(getApiUrl() + '?accion=gastos_operativos')
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if (data.status !== 'ok') return;
+
+        document.getElementById('gastosTotal').textContent = formatoColones(data.total);
+
+        var maxCat = Math.max.apply(null, data.categorias.map(function(c){ return c.total; }).concat([1]));
+        document.getElementById('gastosCategorias').innerHTML = data.categorias.map(function(c){
+          var pct = Math.round((c.total / maxCat) * 100);
+          return '<div class="cat-bar-row"><div class="cat-nombre">'+c.categoria+'</div>'+
+            '<div class="cat-bar-track"><div class="cat-bar-fill" style="width:'+pct+'%;"></div></div>'+
+            '<div class="cat-bar-monto">'+formatoColones(c.total)+'</div></div>';
+        }).join('');
+
+        var body = document.getElementById('gastosBody');
+        var vacio = document.getElementById('gastosVacio');
+        if (!data.movimientos.length){ body.innerHTML=''; vacio.style.display='block'; return; }
+        vacio.style.display='none';
+
+        body.innerHTML = data.movimientos.map(function(m){
+          return '<tr><td>'+m.fecha+'</td><td>'+m.categoria+'</td><td>'+m.descripcion+'</td>'+
+            '<td>'+m.responsable+'</td><td>'+formatoColones(m.monto)+'</td></tr>';
+        }).join('');
+      })
+      .catch(function(err){ console.error('cargarGastosOperativos:', err); });
+  }
 
 })();
 </script>
