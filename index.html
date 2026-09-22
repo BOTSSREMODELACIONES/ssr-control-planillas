@@ -252,6 +252,216 @@
   .cat-bar-monto{width:110px;text-align:right;font-size:12.5px;font-weight:700;flex-shrink:0;}
   .placeholder-view{padding:60px 20px;text-align:center;color:var(--muted);}
   .placeholder-view .titulo{font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px;}
+
+  /* ==========================================================
+     CHAT SASHA — integrado desde sasha-crm-ssr (v1, 22 sept 2026)
+     Todas las clases llevan prefijo "sc-" para no chocar con las
+     del ERP (.badge, .panel, .modal, .kpi, etc.).
+     ========================================================== */
+  .sc-tab-badge{
+    background:var(--red);color:#fff;border-radius:10px;padding:1px 7px;
+    font-size:11px;font-weight:700;line-height:1.5;
+  }
+  .navtab.activa .sc-tab-badge{background:#fff;color:var(--red);}
+
+  .sc-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+  .sc-stats{display:flex;gap:8px;flex-wrap:wrap;}
+  .sc-chip{
+    background:var(--white);border:1px solid var(--border);border-radius:20px;
+    padding:5px 12px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;
+  }
+  .sc-chip b{color:var(--text);}
+  .sc-chip .sc-dot{width:7px;height:7px;border-radius:50%;}
+  .sc-toolbar-right{display:flex;align-items:center;gap:10px;}
+  .sc-last{font-size:11.5px;color:var(--muted);}
+
+  .sc-btn{
+    padding:7px 13px;border-radius:7px;border:1px solid var(--border);background:#fff;color:var(--text);
+    font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+    text-decoration:none;white-space:nowrap;font-family:inherit;
+  }
+  .sc-btn:hover{background:var(--bg);}
+  .sc-btn.sc-wa{background:var(--green-light);color:var(--green);border-color:rgba(18,166,106,.35);}
+  .sc-btn.sc-wa:hover{background:#D5F0E2;}
+  .sc-btn.sc-control.activo{background:var(--red-light);color:var(--red);border-color:rgba(235,87,87,.45);}
+  .sc-btn.sc-girando svg{animation:scGiro .6s linear;}
+  @keyframes scGiro{to{transform:rotate(360deg);}}
+
+  .sc-layout{
+    display:flex;height:calc(100vh - 270px);min-height:560px;
+    background:var(--white);border:1px solid var(--border);border-radius:10px;
+    overflow:hidden;position:relative;
+  }
+
+  /* Lista de clientes */
+  .sc-sidebar{width:310px;min-width:250px;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--white);}
+  .sc-sidebar-head{padding:12px;border-bottom:1px solid var(--border);}
+  .sc-search{
+    width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;
+    font-size:13px;background:#fff;color:var(--text);outline:none;font-family:inherit;
+  }
+  .sc-search:focus{border-color:var(--blue);}
+  .sc-filtros{display:flex;gap:4px;margin-top:8px;}
+  .sc-filtro{
+    flex:1;padding:6px 4px;text-align:center;font-size:11.5px;font-weight:600;border-radius:6px;
+    cursor:pointer;color:var(--muted);border:none;background:transparent;font-family:inherit;
+  }
+  .sc-filtro:hover{background:var(--bg);color:var(--text);}
+  .sc-filtro.activo{background:var(--navy);color:#fff;}
+  .sc-lista{flex:1;overflow-y:auto;padding:6px;}
+  .sc-contacto{
+    display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;
+    cursor:pointer;border:1px solid transparent;
+  }
+  .sc-contacto:hover{background:var(--bg);}
+  .sc-contacto.activo{background:var(--blue-light);border-color:rgba(47,128,237,.3);}
+  .sc-avatar{
+    width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:14px;font-weight:700;flex-shrink:0;
+  }
+  .sc-c-info{flex:1;min-width:0;}
+  .sc-c-nombre{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .sc-c-prev{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+  .sc-contacto.no-leido .sc-c-nombre{font-weight:800;}
+  .sc-contacto.no-leido .sc-c-prev{color:var(--text);font-weight:600;}
+  .sc-c-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+  .sc-c-hora{font-size:10.5px;color:var(--muted);}
+  .sc-contacto.no-leido .sc-c-hora{color:var(--green);font-weight:700;}
+  .sc-fuente{border-radius:4px;padding:1px 5px;font-size:10px;font-weight:700;}
+  .sc-fuente.wa{background:var(--green-light);color:var(--green);}
+  .sc-fuente.ig{background:#FBEAFF;color:#B23BD6;}
+  .sc-fuente.fb{background:var(--blue-light);color:var(--blue);}
+  .sc-punto{width:9px;height:9px;border-radius:50%;background:var(--green);}
+  .sc-sin{padding:30px 14px;text-align:center;color:var(--muted);font-size:13px;}
+  .sc-error{
+    background:var(--red-light);border:1px solid var(--red);color:var(--red);
+    border-radius:8px;padding:10px 12px;font-size:12px;margin:8px;line-height:1.5;
+  }
+
+  /* Panel de conversación */
+  .sc-chat{flex:1;display:flex;flex-direction:column;min-width:0;background:#F7F9FC;}
+  .sc-vacio{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--muted);font-size:13px;}
+  .sc-vacio-icono{
+    width:60px;height:60px;border-radius:50%;background:var(--white);border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;font-size:24px;
+  }
+  .sc-contenido{flex:1;display:none;flex-direction:column;min-height:0;}
+  .sc-chat-head{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--white);}
+  .sc-head-info{flex:1;min-width:0;}
+  .sc-head-nombre{font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .sc-head-sub{font-size:11.5px;color:var(--muted);margin-top:2px;display:flex;gap:10px;flex-wrap:wrap;}
+  .sc-head-acciones{display:flex;gap:8px;flex-wrap:wrap;}
+  .sc-back{display:none;background:none;border:none;font-size:22px;cursor:pointer;color:var(--text);padding:0 4px;line-height:1;}
+  .sc-pausa{
+    display:none;background:var(--orange-light);color:#9A6200;font-size:12px;font-weight:600;
+    padding:7px 16px;border-bottom:1px solid #F3D9A4;
+  }
+  .sc-mensajes{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:4px;}
+  .sc-sep{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:11px;font-weight:600;padding:8px 0;}
+  .sc-sep::before,.sc-sep::after{content:'';flex:1;height:1px;background:var(--border);}
+  .sc-grupo{display:flex;flex-direction:column;gap:2px;margin-bottom:10px;}
+  .sc-grupo.out{align-items:flex-end;}
+  .sc-grupo.in{align-items:flex-start;}
+  .sc-burbuja{max-width:68%;padding:9px 13px;border-radius:14px;font-size:13px;line-height:1.5;word-break:break-word;}
+  .sc-grupo.in .sc-burbuja{background:var(--white);border:1px solid var(--border);border-bottom-left-radius:4px;}
+  .sc-grupo.out .sc-burbuja{background:#DCF5E7;border:1px solid #BFE8D1;border-bottom-right-radius:4px;}
+  .sc-burbuja.sc-pendiente{opacity:.7;}
+  .sc-hora{font-size:10.5px;color:var(--muted);margin-top:3px;padding:0 2px;}
+
+  /* Multimedia */
+  .sc-burbuja.sc-media{padding:6px;width:min(420px,68%);max-width:min(420px,68%);overflow:hidden;}
+  .sc-img{display:block;width:100%;max-height:420px;object-fit:cover;border-radius:10px;background:#E9EEF5;cursor:zoom-in;}
+  .sc-video,.sc-frame{display:block;width:100%;aspect-ratio:16/9;max-height:420px;border:0;border-radius:10px;background:#000;}
+  .sc-audio{display:block;width:min(320px,100%);min-width:230px;}
+  .sc-media-cap{padding:8px 7px 3px;line-height:1.4;}
+  .sc-archivo,.sc-no-disp{
+    display:flex;align-items:center;gap:10px;min-width:220px;padding:10px;border-radius:9px;
+    background:var(--bg);border:1px solid var(--border);color:var(--text);text-decoration:none;
+  }
+  .sc-archivo:hover{background:var(--blue-light);}
+  .sc-archivo-icono{
+    width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;background:var(--white);border:1px solid var(--border);font-size:17px;
+  }
+  .sc-archivo-txt{min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .sc-archivo-tit{font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .sc-archivo-sub{font-size:10.5px;color:var(--muted);}
+
+  /* Respuestas rápidas, emojis y redacción */
+  .sc-rapidas{display:none;gap:6px;padding:8px 14px 4px;overflow-x:auto;background:var(--white);border-top:1px solid var(--border);}
+  .sc-rapida{
+    white-space:nowrap;padding:5px 11px;border-radius:20px;background:var(--bg);border:1px solid var(--border);
+    font-size:11.5px;cursor:pointer;color:var(--text);font-family:inherit;flex-shrink:0;
+  }
+  .sc-rapida:hover{background:var(--blue-light);}
+  .sc-emojis{display:none;flex-wrap:wrap;gap:4px;padding:10px 14px;background:var(--white);border-top:1px solid var(--border);}
+  .sc-emojis button{font-size:21px;background:none;border:none;cursor:pointer;padding:3px;border-radius:6px;}
+  .sc-emojis button:hover{background:var(--bg);}
+  .sc-compose{display:flex;gap:8px;align-items:flex-end;padding:10px 14px;border-top:1px solid var(--border);background:var(--white);}
+  .sc-icon-btn{
+    width:38px;height:38px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;
+    font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .sc-icon-btn:hover{background:var(--bg);}
+  .sc-icon-btn.activo{border-color:var(--navy);background:var(--blue-light);}
+  .sc-input{
+    flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;
+    font-family:inherit;resize:none;min-height:38px;max-height:110px;line-height:1.4;outline:none;color:var(--text);
+  }
+  .sc-input:focus{border-color:var(--blue);}
+  .sc-enviar{
+    background:var(--navy);color:#fff;border:none;border-radius:8px;padding:0 16px;height:38px;
+    font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0;font-family:inherit;
+  }
+  .sc-enviar:hover{background:var(--navy2);}
+  .sc-enviar:disabled{opacity:.5;cursor:default;}
+
+  /* Panel derecho */
+  .sc-derecha{width:250px;border-left:1px solid var(--border);padding:16px 14px;overflow-y:auto;display:none;flex-direction:column;gap:16px;background:var(--white);}
+  .sc-titulo{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px;}
+  .sc-fila{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid #EEF2F8;font-size:12.5px;}
+  .sc-fila span:first-child{color:var(--muted);}
+  .sc-fila span:last-child{font-weight:600;text-align:right;word-break:break-word;max-width:140px;}
+  .sc-act{display:flex;align-items:center;gap:6px;margin-bottom:5px;font-size:10.5px;color:var(--muted);}
+  .sc-act-lbl{width:24px;text-align:right;flex-shrink:0;}
+  .sc-act-bar{flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;}
+  .sc-act-fill{height:100%;border-radius:4px;}
+  .sc-act-n{width:20px;flex-shrink:0;}
+
+  /* Visor de fotos/videos a pantalla completa */
+  .sc-modal{
+    position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;
+    padding:24px;background:rgba(23,42,70,.88);
+  }
+  .sc-modal.abierto{display:flex;}
+  .sc-modal-cont{position:relative;width:min(1100px,96vw);height:min(820px,92vh);display:flex;align-items:center;justify-content:center;}
+  .sc-modal-cont img,.sc-modal-cont video{max-width:100%;max-height:100%;border-radius:12px;background:#000;}
+  .sc-modal-cont iframe{width:100%;height:100%;border:0;border-radius:12px;background:#000;}
+  .sc-modal-cerrar{
+    position:absolute;top:14px;right:14px;z-index:2;width:40px;height:40px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.6);color:#fff;font-size:22px;cursor:pointer;
+  }
+  .sc-modal-cap{
+    position:absolute;left:18px;right:18px;bottom:14px;padding:9px 12px;border-radius:8px;
+    background:rgba(0,0,0,.7);color:#fff;font-size:12px;text-align:center;
+  }
+
+  @media (max-width:1100px){
+    .sc-derecha{display:none !important;}
+  }
+  @media (max-width:720px){
+    .sc-layout{height:calc(100vh - 230px);}
+    .sc-sidebar{position:absolute;inset:0;width:100%;z-index:2;transition:transform .25s ease;}
+    .sc-sidebar.sc-oculto{transform:translateX(-100%);pointer-events:none;}
+    .sc-chat{position:absolute;inset:0;z-index:1;transform:translateX(100%);transition:transform .25s ease;}
+    .sc-chat.sc-visible{transform:translateX(0);}
+    .sc-back{display:block;}
+    .sc-burbuja{max-width:85%;}
+    .sc-burbuja.sc-media{width:min(360px,88%);max-width:88%;}
+    .sc-head-acciones .sc-copiar{display:none;}
+    .sc-enviar span{display:none;}
+    .sc-last{display:none;}
+  }
 </style>
 </head>
 <body>
@@ -279,6 +489,7 @@
     <button class="navtab" data-view="caja">💰 Caja General</button>
     <button class="navtab" data-view="gastos">⛽ Gastos Operativos</button>
     <button class="navtab" data-view="aguinaldo">🎁 RRHH — Aguinaldo</button>
+    <button class="navtab" data-view="chat">💬 Chat Sasha <span class="sc-tab-badge" id="scTabBadge" style="display:none;"></span></button>
   </div>
 
 <div id="viewAsistencia" class="view activa">
@@ -553,6 +764,74 @@
   </div>
 </div><!-- /viewAguinaldo -->
 
+
+<div id="viewChat" class="view">
+
+  <div class="sc-toolbar">
+    <div class="sc-stats">
+      <div class="sc-chip"><span class="sc-dot" style="background:var(--green);"></span>Hoy: <b id="scStatHoy">—</b></div>
+      <div class="sc-chip"><span class="sc-dot" style="background:var(--blue);"></span>Clientes: <b id="scStatClientes">—</b></div>
+      <div class="sc-chip"><span class="sc-dot" style="background:var(--orange);"></span>Mensajes: <b id="scStatMensajes">—</b></div>
+      <div class="sc-chip"><span class="sc-dot" style="background:var(--red);"></span>Sin leer: <b id="scStatSinLeer">—</b></div>
+    </div>
+    <div class="sc-toolbar-right">
+      <span class="sc-last" id="scUltima">—</span>
+      <button class="sc-btn" id="scBtnActualizar" type="button">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Actualizar
+      </button>
+    </div>
+  </div>
+
+  <div class="sc-layout">
+
+    <div class="sc-sidebar" id="scSidebar">
+      <div class="sc-sidebar-head">
+        <input class="sc-search" id="scBuscar" type="text" placeholder="🔍 Buscar cliente o número…" autocomplete="off" />
+        <div class="sc-filtros" id="scFiltros">
+          <button class="sc-filtro activo" type="button" data-filtro="all">Todos</button>
+          <button class="sc-filtro" type="button" data-filtro="nl">Sin leer</button>
+          <button class="sc-filtro" type="button" data-filtro="wa">WhatsApp</button>
+          <button class="sc-filtro" type="button" data-filtro="ig">Instagram</button>
+          <button class="sc-filtro" type="button" data-filtro="fb">Facebook</button>
+        </div>
+      </div>
+      <div class="sc-lista" id="scLista"><div class="sc-sin">Cargando conversaciones…</div></div>
+    </div>
+
+    <div class="sc-chat" id="scChat">
+      <div class="sc-vacio" id="scVacio">
+        <div class="sc-vacio-icono">💬</div>
+        <div>Seleccioná un cliente</div>
+      </div>
+      <div class="sc-contenido" id="scContenido">
+        <div class="sc-chat-head" id="scHead"></div>
+        <div class="sc-pausa" id="scPausa"></div>
+        <div class="sc-mensajes" id="scMensajes"></div>
+        <div class="sc-rapidas" id="scRapidas">
+          <button class="sc-rapida" type="button" data-rapida="saludo">👋 Saludo</button>
+          <button class="sc-rapida" type="button" data-rapida="cita">📅 Confirmar cita</button>
+          <button class="sc-rapida" type="button" data-rapida="cotizacion">📋 Cotización lista</button>
+          <button class="sc-rapida" type="button" data-rapida="sinpe">💳 SINPE</button>
+          <button class="sc-rapida" type="button" data-rapida="visita">🏠 Info visita</button>
+          <button class="sc-rapida" type="button" data-rapida="seguimiento">🔄 Seguimiento</button>
+        </div>
+        <div class="sc-emojis" id="scEmojis"></div>
+        <div class="sc-compose">
+          <button class="sc-icon-btn" type="button" id="scBtnRapidas" title="Mensajes rápidos">⚡</button>
+          <button class="sc-icon-btn" type="button" id="scBtnEmojis" title="Emojis">😊</button>
+          <textarea class="sc-input" id="scInput" rows="1" placeholder="Redactar mensaje… (Enter envía, Shift+Enter nueva línea)"></textarea>
+          <button class="sc-icon-btn" type="button" id="scBtnAudio" title="Abrir WhatsApp para grabar audio">🎙️</button>
+          <button class="sc-enviar" type="button" id="scBtnEnviar">➤ <span>Enviar</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc-derecha" id="scDerecha"></div>
+
+  </div>
+</div><!-- /viewChat -->
+
 </main>
 
 <div class="modal-bg" id="modalBg">
@@ -565,6 +844,11 @@
       <button class="primary" id="btnGuardarUrl">Guardar y recargar</button>
     </div>
   </div>
+</div>
+
+<div class="sc-modal" id="scModal">
+  <button class="sc-modal-cerrar" type="button" id="scModalCerrar" aria-label="Cerrar">×</button>
+  <div class="sc-modal-cont" id="scModalCont"></div>
 </div>
 
 <script>
@@ -1000,9 +1284,14 @@
       document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('activa'); });
       var mapaId = {
         asistencia:'viewAsistencia', ficha:'viewFicha', dashboard:'viewDashboard',
-        caja:'viewCaja', gastos:'viewGastos', aguinaldo:'viewAguinaldo'
+        caja:'viewCaja', gastos:'viewGastos', aguinaldo:'viewAguinaldo',
+        chat:'viewChat'
       };
       document.getElementById(mapaId[vista]).classList.add('activa');
+
+      // Chat Sasha: avisarle si está visible o no (maneja su propia carga
+      // y su propio ritmo de actualización — ver módulo al final).
+      if (window.SashaChat) window.SashaChat.setVisible(vista === 'chat');
 
       if (!vistasCargadas[vista]) {
         vistasCargadas[vista] = true;
@@ -1285,6 +1574,843 @@
       })
       .catch(function(err){ console.error('cargarAguinaldo:', err); });
   }
+
+})();
+</script>
+
+<script>
+/* ==========================================================================
+   CHAT SASHA — módulo integrado en el ERP (v1, 22 sept 2026)
+   Portado desde sasha-crm-ssr.netlify.app. Todo vive dentro de este IIFE
+   (sin variables globales) para no chocar con el código del ERP. La única
+   pieza expuesta es window.SashaChat.setVisible(), que usa la navegación
+   por pestañas para avisar cuándo el chat está en pantalla.
+
+   Fuente de datos: CSV publicado de SSR_Memoria_Chats → MENSAJES.
+   Acciones: endpoints del bot en Railway (/send-message,
+   /api/conversacion/estado | tomar-control | liberar-control).
+
+   Ritmo de actualización:
+     • Pestaña Chat abierta  → cada 60 s.
+     • Otra pestaña del ERP  → cada 3 min (solo para el contador de no leídos).
+     • Primera carga en segundo plano: 8 s después de abrir el ERP, para no
+       competir con Asistencia/Planillas.
+   ========================================================================== */
+(function(){
+  'use strict';
+
+  var CSV_MENSAJES = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRhEL0yni0bWCgMLJ8r6H8MgsIUAFPRowJW5fDKstC_1XEAqFuNegkzbx9W-QNFwbSQVjY3VqK7DCET/pub?gid=0&single=true&output=csv';
+  var BOT_URL      = 'https://ssr-whatsapp-bot-production.up.railway.app';
+
+  var REFRESCO_VISIBLE_MS = 60 * 1000;
+  var REFRESCO_FONDO_MS   = 3 * 60 * 1000;
+  var PRIMERA_CARGA_MS    = 8 * 1000;
+  var VISTOS_KEY          = 'ssr_chat_sasha_vistos';
+
+  var RAPIDAS = {
+    saludo:      '¡Hola! Soy Sasha de SS Remodelaciones 😊 ¿En qué le puedo ayudar hoy?',
+    cita:        'Le confirmo que su visita técnica quedó agendada. Nuestro equipo llegará puntual. Cualquier consulta, con gusto le atiendo 😊',
+    cotizacion:  'Su presupuesto ya está listo y se lo enviamos al correo registrado. ¿Desea revisar algún detalle? 📋',
+    sinpe:       'El pago de ₡25.000 por la visita técnica puede realizarlo por SINPE Móvil al número 7068-0477 a nombre de SS Remodelaciones. ¿Tiene alguna duda? 😊',
+    visita:      'Para que su visita sea más provechosa:\n✔ Tenga acceso al área a trabajar\n✔ Si tiene medidas o fotos de referencia, tráigalas\n✔ Anote las preguntas que quiera hacerle al equipo 😊',
+    seguimiento: 'Buen día, le escribimos de SS Remodelaciones para darle seguimiento a su consulta. ¿Tiene alguna duda o desea agendar la visita técnica? 😊'
+  };
+
+  var EMOJIS = ['😊','👋','✅','📋','📅','📍','💰','🏠','👷','🔨','⚠️','🙏','💬','📞','🌙','☀️','✔️','❌','🫡','😅'];
+
+  var st = {
+    mensajes: [],
+    contactos: {},
+    activo: null,
+    filtro: 'all',
+    visible: false,
+    cargando: false,
+    cargado: false,
+    ultimaCargaTs: 0,
+    pendientes: {},   // teléfono → mensajes enviados desde acá que aún no están en el CSV
+    control: {},      // teléfono → { pausado, pausadoHasta }
+    vistos: leerVistos(),
+    firmaActivo: ''   // para no re-renderizar el chat abierto si nada cambió
+  };
+
+  function $(id){ return document.getElementById(id); }
+
+  // ── Utilidades ───────────────────────────────────────────────────────────
+  function esc(s){
+    if (s === null || s === undefined) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function escAttr(s){ return esc(s).replace(/'/g, '&#39;'); }
+
+  function leerVistos(){
+    try { return JSON.parse(localStorage.getItem(VISTOS_KEY) || '{}') || {}; }
+    catch (e) { return {}; }
+  }
+  function guardarVistos(){
+    try { localStorage.setItem(VISTOS_KEY, JSON.stringify(st.vistos)); } catch (e) {}
+  }
+
+  // CSV robusto: comas y saltos de línea dentro de comillas.
+  function parseCSV(text){
+    var rows = [], row = [], cur = '', inQ = false;
+    var src = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    for (var i = 0; i < src.length; i++){
+      var ch = src[i];
+      if (inQ){
+        if (ch === '"'){
+          if (src[i + 1] === '"'){ cur += '"'; i++; }
+          else inQ = false;
+        } else cur += ch;
+      } else if (ch === '"') inQ = true;
+      else if (ch === ','){ row.push(cur); cur = ''; }
+      else if (ch === '\n'){
+        row.push(cur); cur = '';
+        if (row.some(function(c){ return c !== ''; })) rows.push(row);
+        row = [];
+      } else cur += ch;
+    }
+    row.push(cur);
+    if (row.some(function(c){ return c !== ''; })) rows.push(row);
+    return rows;
+  }
+
+  function fuente(phone){
+    if (!phone) return 'wa';
+    if (/^ig_/i.test(phone)) return 'ig';
+    if (/^fb_/i.test(phone)) return 'fb';
+    return 'wa';
+  }
+  function fuenteNombre(src){ return { wa:'WhatsApp', ig:'Instagram', fb:'Messenger' }[src] || src; }
+
+  function formatoTel(phone){
+    if (!phone) return '';
+    if (/^ig_/i.test(phone)) return 'Instagram';
+    if (/^fb_/i.test(phone)) return 'Messenger';
+    return phone.replace(/^\+506/, '+506 ');
+  }
+
+  function colorAvatar(str){
+    var colores = ['#E5484D','#D98C00','#12A66A','#2F80ED','#7656D6','#E2721B','#0E9CB3','#C2297A'];
+    var h = 0;
+    for (var i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) & 0xffffffff;
+    return colores[Math.abs(h) % colores.length];
+  }
+
+  function iniciales(nombre){
+    if (!nombre) return '?';
+    if (/^\+?\d/.test(nombre)) return '#';
+    var p = nombre.trim().split(/\s+/);
+    return (p.length >= 2 ? p[0][0] + p[1][0] : p[0].slice(0, 2)).toUpperCase();
+  }
+
+  function diaLocal(iso){
+    var d = new Date(iso);
+    return isNaN(d.getTime()) ? '' : d.toLocaleDateString('en-CA'); // YYYY-MM-DD en hora local
+  }
+
+  function tiempoRelativo(iso){
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    var min = Math.floor((Date.now() - d.getTime()) / 60000);
+    if (min < 1) return 'ahora';
+    if (min < 60) return min + 'm';
+    var h = Math.floor(min / 60);
+    if (h < 24) return h + 'h';
+    var dias = Math.floor(h / 24);
+    if (dias < 7) return dias + 'd';
+    return d.toLocaleDateString('es-CR', { day:'numeric', month:'short' });
+  }
+
+  function hora(iso){
+    var d = new Date(iso);
+    return isNaN(d.getTime()) ? '' : d.toLocaleTimeString('es-CR', { hour:'2-digit', minute:'2-digit', hour12:false });
+  }
+
+  function etiquetaDia(iso){
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    var hoy = new Date();
+    var ayer = new Date(); ayer.setDate(hoy.getDate() - 1);
+    if (d.toDateString() === hoy.toDateString()) return 'Hoy';
+    if (d.toDateString() === ayer.toDateString()) return 'Ayer';
+    return d.toLocaleDateString('es-CR', { weekday:'short', day:'numeric', month:'short' });
+  }
+
+  function urlSegura(v){
+    if (!v) return '';
+    try {
+      var u = new URL(String(v).trim(), window.location.href);
+      return (u.protocol === 'http:' || u.protocol === 'https:') ? u.href : '';
+    } catch (e) { return ''; }
+  }
+
+  function idDrive(v){
+    if (!v) return '';
+    var raw = String(v).trim();
+    var pats = [/\/file\/d\/([a-zA-Z0-9_-]+)/, /\/d\/([a-zA-Z0-9_-]+)/, /[?&]id=([a-zA-Z0-9_-]+)/];
+    for (var i = 0; i < pats.length; i++){
+      var m = raw.match(pats[i]);
+      if (m) return m[1];
+    }
+    return '';
+  }
+
+  function tipoMedia(type, url){
+    var t = String(type || '').trim().toLowerCase();
+    if (['image','photo','foto','imagen','sticker'].indexOf(t) >= 0) return 'image';
+    if (['video','vídeo'].indexOf(t) >= 0) return 'video';
+    if (['audio','voice','voz','nota de voz','ptt'].indexOf(t) >= 0) return 'audio';
+    if (['document','documento','file','archivo','pdf'].indexOf(t) >= 0) return 'document';
+    var limpio = String(url || '').split('?')[0].toLowerCase();
+    if (/\.(jpg|jpeg|png|gif|webp|heic|heif)$/.test(limpio)) return 'image';
+    if (/\.(mp4|webm|mov|m4v|avi)$/.test(limpio)) return 'video';
+    if (/\.(mp3|wav|ogg|m4a|aac|opus)$/.test(limpio)) return 'audio';
+    if (url) return 'document';
+    return 'text';
+  }
+
+  function driveImagen(id, size){ return 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(id) + '&sz=' + encodeURIComponent(size || 'w1600'); }
+  function drivePreview(id){ return 'https://drive.google.com/file/d/' + encodeURIComponent(id) + '/preview'; }
+  function driveDescarga(id){ return 'https://drive.google.com/uc?export=download&id=' + encodeURIComponent(id); }
+
+  function vistaPrevia(m){
+    var k = tipoMedia(m.type, m.driveUrl);
+    if (k === 'image') return m.content || '📷 Foto';
+    if (k === 'video') return m.content || '🎥 Video';
+    if (k === 'audio') return m.content || '🎙️ Nota de voz';
+    if (k === 'document') return m.content || '📎 Archivo';
+    return m.content || '—';
+  }
+
+  function textoMedia(m){
+    var t = String(m.content || '').trim();
+    var generico = /^\[?(imagen|foto|video|vídeo|audio|nota de voz|archivo|documento)( enviad[oa] por el cliente| recibid[oa])?\]?$/i;
+    return t && !generico.test(t) ? t : '';
+  }
+
+  function esSalida(m){
+    var d = String(m.direction || '').toLowerCase();
+    return d === 'out' || d.indexOf('out') >= 0 || d === 'salida' || d === 'sasha';
+  }
+
+  // ── Multimedia ───────────────────────────────────────────────────────────
+  function htmlMedia(m){
+    var url  = urlSegura(m.driveUrl);
+    var id   = idDrive(url);
+    var tipo = tipoMedia(m.type, url);
+    var cap  = textoMedia(m);
+    var capHtml = cap ? '<div class="sc-media-cap">' + esc(cap).replace(/\n/g, '<br>') + '</div>' : '';
+
+    if (!url){
+      var lbl = { image:['📷','Foto recibida'], video:['🎥','Video recibido'], audio:['🎙️','Audio recibido'], document:['📎','Archivo recibido'] }[tipo] || ['📎','Contenido multimedia'];
+      return '<div class="sc-no-disp"><div class="sc-archivo-icono">' + lbl[0] + '</div><div class="sc-archivo-txt"><div class="sc-archivo-tit">' + lbl[1] + '</div><div class="sc-archivo-sub">Sin enlace de Drive guardado para este archivo.</div></div></div>' + capHtml;
+    }
+
+    if (tipo === 'image'){
+      var src  = id ? driveImagen(id) : url;
+      var full = id ? driveImagen(id, 'w2400') : url;
+      return '<img class="sc-img" loading="lazy" src="' + escAttr(src) + '" alt="Imagen del cliente" data-sc-ver="image" data-sc-url="' + escAttr(full) + '" data-sc-cap="' + escAttr(cap) + '">' + capHtml;
+    }
+    if (tipo === 'video'){
+      if (id) return '<iframe class="sc-frame" loading="lazy" src="' + escAttr(drivePreview(id)) + '" title="Video del cliente" allow="autoplay; encrypted-media" allowfullscreen></iframe>' + capHtml;
+      return '<video class="sc-video" controls preload="metadata" playsinline src="' + escAttr(url) + '"></video>' + capHtml;
+    }
+    if (tipo === 'audio'){
+      return '<audio class="sc-audio" controls preload="metadata" src="' + escAttr(id ? driveDescarga(id) : url) + '"></audio>' + capHtml;
+    }
+    return '<a class="sc-archivo" href="' + escAttr(id ? drivePreview(id) : url) + '" target="_blank" rel="noopener noreferrer"><div class="sc-archivo-icono">📎</div><div class="sc-archivo-txt"><div class="sc-archivo-tit">' + esc(cap || 'Abrir archivo adjunto') + '</div><div class="sc-archivo-sub">Abrir en una pestaña nueva</div></div></a>';
+  }
+
+  function abrirVisor(url, tipo, cap){
+    var u = urlSegura(url);
+    if (!u) return;
+    var id = idDrive(u);
+    var cuerpo = tipo === 'image'
+      ? '<img src="' + escAttr(u) + '" alt="Imagen ampliada">'
+      : (id ? '<iframe src="' + escAttr(drivePreview(id)) + '" allow="autoplay; encrypted-media" allowfullscreen></iframe>'
+            : '<video controls autoplay playsinline src="' + escAttr(u) + '"></video>');
+    if (cap) cuerpo += '<div class="sc-modal-cap">' + esc(cap) + '</div>';
+    $('scModalCont').innerHTML = cuerpo;
+    $('scModal').classList.add('abierto');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function cerrarVisor(){
+    $('scModal').classList.remove('abierto');
+    $('scModalCont').innerHTML = '';
+    document.body.style.overflow = '';
+  }
+
+  // ── Carga de datos ───────────────────────────────────────────────────────
+  function descargarCSV(){
+    return fetch(CSV_MENSAJES + '&t=' + Date.now())
+      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+      .catch(function(){
+        // Respaldo: proxy CORS público.
+        return fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(CSV_MENSAJES) + '&t=' + Date.now())
+          .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+          .then(function(j){ return j.contents || ''; });
+      });
+  }
+
+  function cargar(manual){
+    if (st.cargando) return;
+    st.cargando = true;
+    var btn = $('scBtnActualizar');
+    btn.classList.remove('sc-girando'); void btn.offsetWidth; btn.classList.add('sc-girando');
+
+    descargarCSV()
+      .then(function(texto){
+        procesar(texto);
+        st.cargado = true;
+        st.ultimaCargaTs = Date.now();
+        $('scUltima').textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-CR', { hour:'2-digit', minute:'2-digit' });
+      })
+      .catch(function(err){
+        console.error('[Chat Sasha] No se pudieron cargar los mensajes:', err);
+        if (st.visible || manual || !st.cargado){
+          var extra = /40[34]/.test(err.message)
+            ? '<br><br>Verificá que la hoja MENSAJES siga publicada: Archivo → Compartir → Publicar en la web → MENSAJES → CSV.'
+            : '';
+          if (!st.cargado) $('scLista').innerHTML = '<div class="sc-error">⚠️ No se pudieron cargar los mensajes: ' + esc(err.message) + extra + '</div>';
+        }
+      })
+      .then(function(){ st.cargando = false; });
+  }
+
+  function procesar(csv){
+    var rows = parseCSV(csv);
+    if (rows.length < 2) return;
+
+    var header = rows[0].map(function(h){ return h.toLowerCase().trim(); });
+    var alias = {
+      fecha:     ['fecha y hora','fecha','timestamp','date'],
+      phone:     ['número de teléfono','numero de telefono','telefono','teléfono','numero','phone'],
+      nombre:    ['nombre de contacto','nombre','name','cliente'],
+      direction: ['entrada / salida','entrada/salida','dirección','direccion','direction'],
+      type:      ['tipo','type','media','tipo de mensaje'],
+      content:   ['mensaje','contenido','content','text','message','caption'],
+      mediaId:   ['mediaid','media id','id media','id de media'],
+      driveUrl:  ['driveurl','drive url','url drive','url de drive','media url','url multimedia','archivo url'],
+      proyecto:  ['proyecto','project'],
+      zona:      ['zona','zone']
+    };
+    var porDefecto = { fecha:0, phone:1, nombre:2, direction:3, type:4, content:5, mediaId:6, driveUrl:7, proyecto:8, zona:9 };
+    var col = {};
+    Object.keys(alias).forEach(function(k){
+      for (var i = 0; i < alias[k].length; i++){
+        var idx = header.indexOf(alias[k][i]);
+        if (idx !== -1){ col[k] = idx; break; }
+      }
+      if (col[k] === undefined) col[k] = porDefecto[k];
+    });
+    function g(row, k){ return String(row[col[k]] || '').trim(); }
+
+    function telValido(p){
+      if (!p) return false;
+      if (/^(ig_|fb_)/i.test(p)) return true;
+      return /^\+?\d[\d\s\-]{4,}$/.test(p);
+    }
+
+    st.mensajes = rows.slice(1)
+      .filter(function(r){ return r.length > 2; })
+      .map(function(r){
+        return {
+          fecha: g(r,'fecha'), phone: g(r,'phone'), nombre: g(r,'nombre'),
+          direction: (g(r,'direction') || 'in').toLowerCase(),
+          type: (g(r,'type') || 'text').toLowerCase(),
+          content: g(r,'content'), mediaId: g(r,'mediaId'), driveUrl: g(r,'driveUrl'),
+          proyecto: g(r,'proyecto'), zona: g(r,'zona')
+        };
+      })
+      .filter(function(m){ return telValido(m.phone); });
+
+    // Mejor nombre / proyecto / zona por teléfono
+    var mejor = {};
+    st.mensajes.forEach(function(m){
+      var b = mejor[m.phone] || (mejor[m.phone] = { nombre:'', proyecto:'', zona:'' });
+      if (m.nombre && !/^[\d+]/.test(m.nombre) && !b.nombre) b.nombre = m.nombre;
+      if (m.proyecto) b.proyecto = m.proyecto;
+      if (m.zona) b.zona = m.zona;
+    });
+
+    // Respaldo: nombre deducido de saludos de Sasha ("Perfecto, Carlos", "don Carlos")
+    var noNombres = { Soy:1, Sasha:1, Con:1, Por:1, Para:1, Que:1, Les:1, Nos:1, Sus:1, Muy:1, Bien:1, Todo:1, Como:1, Hola:1, Hay:1, Una:1, Uno:1, Los:1, Las:1, Del:1, Esto:1, Este:1 };
+    var patrones = [
+      /(?:Perfecto|Mucho gusto|Listo|Gracias|Hola|Buenos días|Buenas tardes|Buenas noches|Buen día|Hola de nuevo|Entendido|Claro|Con gusto)[,!\s]+(?:don\s+|doña\s+)?([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+){0,2})\b/,
+      /\b([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+){0,2}),\s+(?:le confirmo|le cuento|ya quedó|queda todo|disculpe|su visita|la visita)/,
+      /\bdon\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)?)\b/
+    ];
+    // Lugares que Sasha menciona igual que un nombre ("¡Perfecto, Santa Bárbara
+    // de Heredia está dentro de nuestra zona!") — nunca son el nombre del cliente.
+    var lugares = /^(San|Santa|Santo|La|El|Los|Las|Heredia|Alajuela|Cartago|Puntarenas|Guanacaste|Lim[oó]n|Escaz[uú]|Desamparados|Curridabat|Tib[aá]s|Moravia|Coronado|Goicoechea|Guadalupe|Pavas|Belén|Bel[eé]n|Barva|Grecia|Atenas|Tres R[ií]os|Zapote|Sabanilla|Rohrmoser)\b/;
+    st.mensajes.forEach(function(m){
+      var b = mejor[m.phone];
+      if (b.nombre || !esSalida(m) || !m.content) return;
+      // Si en ese mismo mensaje Sasha PIDE el nombre, lo que vaya después del
+      // saludo no es un nombre.
+      if (/su nombre|con qui[eé]n tengo el gusto/i.test(m.content)) return;
+      for (var i = 0; i < patrones.length; i++){
+        var r = m.content.match(patrones[i]);
+        if (r && r[1]){
+          var cand = r[1].trim();
+          if (cand.length > 2 && !noNombres[cand.split(' ')[0]] && !lugares.test(cand)){ b.nombre = cand; break; }
+        }
+      }
+    });
+
+    // Contactos
+    var contactos = {};
+    st.mensajes.forEach(function(m){
+      var ph = m.phone, b = mejor[ph];
+      var c = contactos[ph];
+      if (!c){
+        c = contactos[ph] = {
+          phone: ph, nombre: b.nombre || ph, source: fuente(ph),
+          primerMsg: m.fecha, ultimoMsg: m.fecha, ultimoTexto: vistaPrevia(m),
+          ultimoEntrante: '', total: 0, proyecto: b.proyecto, zona: b.zona, porDia: {}
+        };
+      } else {
+        if (m.fecha > c.ultimoMsg){ c.ultimoMsg = m.fecha; c.ultimoTexto = vistaPrevia(m); }
+        if (m.fecha < c.primerMsg) c.primerMsg = m.fecha;
+      }
+      if (!esSalida(m) && m.fecha > c.ultimoEntrante) c.ultimoEntrante = m.fecha;
+      c.total++;
+      var dia = diaLocal(m.fecha);
+      if (dia) c.porDia[dia] = (c.porDia[dia] || 0) + 1;
+    });
+    st.contactos = contactos;
+
+    // Primera vez en este navegador: todo se da por leído (si no, aparecerían
+    // cientos de "no leídos" viejos).
+    if (!Object.keys(st.vistos).length){
+      Object.keys(contactos).forEach(function(ph){ st.vistos[ph] = contactos[ph].ultimoMsg; });
+      guardarVistos();
+    }
+
+    // El chat abierto en pantalla siempre cuenta como leído.
+    if (st.visible && st.activo && contactos[st.activo]) marcarVisto(st.activo);
+
+    // Estadísticas
+    var hoy = diaLocal(new Date().toISOString());
+    $('scStatHoy').textContent = st.mensajes.filter(function(m){ return diaLocal(m.fecha) === hoy; }).length;
+    $('scStatClientes').textContent = Object.keys(contactos).length;
+    $('scStatMensajes').textContent = st.mensajes.length;
+
+    actualizarNoLeidos();
+    renderLista();
+
+    if (st.activo && contactos[st.activo]){
+      var firma = st.activo + '|' + contactos[st.activo].total + '|' + contactos[st.activo].ultimoMsg;
+      if (firma !== st.firmaActivo){
+        renderMensajes(st.activo, true);
+        renderDerecha(contactos[st.activo]);
+        st.firmaActivo = firma;
+      }
+    }
+  }
+
+  // ── No leídos ────────────────────────────────────────────────────────────
+  function noLeido(c){
+    if (!c.ultimoEntrante) return false;
+    if (st.visible && st.activo === c.phone) return false;
+    return c.ultimoEntrante > (st.vistos[c.phone] || '');
+  }
+
+  function marcarVisto(ph){
+    var c = st.contactos[ph];
+    if (!c) return;
+    st.vistos[ph] = c.ultimoMsg;
+    guardarVistos();
+  }
+
+  function actualizarNoLeidos(){
+    var n = 0;
+    Object.keys(st.contactos).forEach(function(ph){ if (noLeido(st.contactos[ph])) n++; });
+    $('scStatSinLeer').textContent = n;
+    var badge = $('scTabBadge');
+    badge.textContent = n > 99 ? '99+' : n;
+    badge.style.display = n > 0 ? 'inline-block' : 'none';
+  }
+
+  // ── Lista de clientes ────────────────────────────────────────────────────
+  function renderLista(){
+    var q = $('scBuscar').value.trim().toLowerCase();
+    var lista = Object.keys(st.contactos).map(function(ph){ return st.contactos[ph]; })
+      .filter(function(c){
+        if (st.filtro === 'nl' && !noLeido(c)) return false;
+        if (['wa','ig','fb'].indexOf(st.filtro) >= 0 && c.source !== st.filtro) return false;
+        if (q && c.nombre.toLowerCase().indexOf(q) === -1 && c.phone.indexOf(q) === -1) return false;
+        return true;
+      })
+      .sort(function(a, b){ return b.ultimoMsg.localeCompare(a.ultimoMsg); });
+
+    if (!lista.length){
+      $('scLista').innerHTML = '<div class="sc-sin">' + (st.filtro === 'nl' ? 'No hay conversaciones sin leer 🎉' : 'Sin resultados') + '</div>';
+      return;
+    }
+
+    $('scLista').innerHTML = lista.map(function(c){
+      var color = colorAvatar(c.phone);
+      var nl = noLeido(c);
+      var prev = c.ultimoTexto.length > 48 ? c.ultimoTexto.slice(0, 48) + '…' : c.ultimoTexto;
+      return '<div class="sc-contacto' + (st.activo === c.phone ? ' activo' : '') + (nl ? ' no-leido' : '') + '" data-phone="' + escAttr(c.phone) + '">' +
+        '<div class="sc-avatar" style="background:' + color + '1F;color:' + color + ';">' + esc(iniciales(c.nombre)) + '</div>' +
+        '<div class="sc-c-info"><div class="sc-c-nombre">' + esc(c.nombre) + '</div><div class="sc-c-prev">' + esc(prev) + '</div></div>' +
+        '<div class="sc-c-meta"><div class="sc-c-hora">' + tiempoRelativo(c.ultimoMsg) + '</div>' +
+          (nl ? '<span class="sc-punto" title="Mensaje nuevo"></span>' : '<span class="sc-fuente ' + c.source + '">' + ({wa:'WA',ig:'IG',fb:'FB'}[c.source]) + '</span>') +
+        '</div></div>';
+    }).join('');
+  }
+
+  // ── Conversación ─────────────────────────────────────────────────────────
+  function seleccionar(ph){
+    var c = st.contactos[ph];
+    if (!c) return;
+    st.activo = ph;
+    marcarVisto(ph);
+    actualizarNoLeidos();
+    renderLista();
+
+    $('scVacio').style.display = 'none';
+    $('scContenido').style.display = 'flex';
+
+    var color = colorAvatar(ph);
+    var esWA = c.source === 'wa';
+    var tel = ph.replace(/\D/g, '');
+    $('scHead').innerHTML =
+      '<button class="sc-back" type="button" data-accion="volver" aria-label="Volver">‹</button>' +
+      '<div class="sc-avatar" style="background:' + color + '1F;color:' + color + ';">' + esc(iniciales(c.nombre)) + '</div>' +
+      '<div class="sc-head-info"><div class="sc-head-nombre">' + esc(c.nombre) + '</div>' +
+        '<div class="sc-head-sub"><span>' + esc(formatoTel(ph)) + '</span>' +
+        (c.proyecto ? '<span>🏗️ ' + esc(c.proyecto) + '</span>' : '') +
+        (c.zona ? '<span>📍 ' + esc(c.zona) + '</span>' : '') + '</div></div>' +
+      '<div class="sc-head-acciones">' +
+        (esWA ? '<a class="sc-btn sc-wa" href="https://wa.me/' + tel + '" target="_blank" rel="noopener">💬 WhatsApp</a>' : '') +
+        (esWA ? '<button class="sc-btn sc-control" type="button" data-accion="control" id="scBtnControl">⏱ …</button>' : '') +
+        '<button class="sc-btn sc-copiar" type="button" data-accion="copiar">📋 Copiar</button>' +
+      '</div>';
+
+    $('scPausa').style.display = 'none';
+    renderMensajes(ph, false);
+    renderDerecha(c);
+    st.firmaActivo = ph + '|' + c.total + '|' + c.ultimoMsg;
+
+    if (esWA) consultarControl(ph);
+
+    if (window.innerWidth <= 720){
+      $('scSidebar').classList.add('sc-oculto');
+      $('scChat').classList.add('sc-visible');
+    }
+  }
+
+  function volverLista(){
+    $('scSidebar').classList.remove('sc-oculto');
+    $('scChat').classList.remove('sc-visible');
+  }
+
+  function renderMensajes(ph, conservarScroll){
+    var area = $('scMensajes');
+    var cercaDelFinal = area.scrollHeight - area.scrollTop - area.clientHeight < 120;
+
+    var delCSV = st.mensajes.filter(function(m){ return m.phone === ph; });
+    var pend = (st.pendientes[ph] || []).filter(function(pm){
+      return !delCSV.some(function(m){ return esSalida(m) && m.content === pm.content; });
+    });
+    st.pendientes[ph] = pend;
+    var msgs = delCSV.concat(pend).sort(function(a, b){ return a.fecha.localeCompare(b.fecha); });
+
+    if (!msgs.length){
+      area.innerHTML = '<div class="sc-sin">Sin mensajes registrados</div>';
+      return;
+    }
+
+    var html = '', ultimoDia = '', ultimaDir = '', abierto = false;
+    msgs.forEach(function(m){
+      var dia = etiquetaDia(m.fecha);
+      if (dia !== ultimoDia){
+        if (abierto) html += '</div>';
+        abierto = false;
+        html += '<div class="sc-sep">' + esc(dia) + '</div>';
+        ultimoDia = dia; ultimaDir = '';
+      }
+      var dir = esSalida(m) ? 'out' : 'in';
+      if (dir !== ultimaDir){
+        if (abierto) html += '</div>';
+        html += '<div class="sc-grupo ' + dir + '">';
+        abierto = true; ultimaDir = dir;
+      }
+      var tipo = tipoMedia(m.type, m.driveUrl);
+      var clase = 'sc-burbuja' + (tipo !== 'text' ? ' sc-media' : '') + (m._pendiente ? ' sc-pendiente' : '');
+      var cuerpo = tipo !== 'text' ? htmlMedia(m) : esc(m.content || '—').replace(/\n/g, '<br>');
+      html += '<div class="' + clase + '">' + cuerpo + '</div><div class="sc-hora">' + hora(m.fecha) + (m._pendiente ? ' · enviando…' : '') + '</div>';
+    });
+    if (abierto) html += '</div>';
+
+    area.innerHTML = html;
+    if (!conservarScroll || cercaDelFinal) area.scrollTop = area.scrollHeight;
+  }
+
+  function renderDerecha(c){
+    var panel = $('scDerecha');
+    panel.style.display = 'flex';
+    var color = colorAvatar(c.phone);
+
+    var dias = [];
+    for (var i = 6; i >= 0; i--){
+      var d = new Date(); d.setDate(d.getDate() - i);
+      var clave = d.toLocaleDateString('en-CA');
+      dias.push({ lbl: d.toLocaleDateString('es-CR', { weekday:'short' }).slice(0, 2), n: c.porDia[clave] || 0 });
+    }
+    var max = Math.max.apply(null, dias.map(function(x){ return x.n; }).concat([1]));
+
+    panel.innerHTML =
+      '<div><div class="sc-titulo">Información</div>' +
+        '<div class="sc-fila"><span>Canal</span><span>' + fuenteNombre(c.source) + '</span></div>' +
+        '<div class="sc-fila"><span>Mensajes</span><span>' + c.total + '</span></div>' +
+        '<div class="sc-fila"><span>Proyecto</span><span>' + esc(c.proyecto || '—') + '</span></div>' +
+        '<div class="sc-fila"><span>Zona</span><span>' + esc(c.zona || '—') + '</span></div>' +
+        '<div class="sc-fila"><span>Primer contacto</span><span>' + (c.primerMsg ? new Date(c.primerMsg).toLocaleDateString('es-CR', { day:'numeric', month:'short', year:'numeric' }) : '—') + '</span></div>' +
+        '<div class="sc-fila"><span>Último mensaje</span><span>' + tiempoRelativo(c.ultimoMsg) + '</span></div>' +
+      '</div>' +
+      '<div><div class="sc-titulo">Actividad (7 días)</div>' +
+        dias.map(function(x){
+          return '<div class="sc-act"><div class="sc-act-lbl">' + x.lbl + '</div><div class="sc-act-bar"><div class="sc-act-fill" style="width:' + (x.n / max * 100) + '%;background:' + (x.n ? color : 'transparent') + ';"></div></div><div class="sc-act-n">' + (x.n || '') + '</div></div>';
+        }).join('') +
+      '</div>';
+  }
+
+  // ── Control manual (pausa de Sasha para este cliente) ────────────────────
+  function consultarControl(ph){
+    fetch(BOT_URL + '/api/conversacion/estado?telefono=' + encodeURIComponent(ph))
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data && data.ok){
+          st.control[ph] = data;
+          pintarControl(ph);
+        }
+      })
+      .catch(function(err){ console.warn('[Chat Sasha] No se pudo consultar el estado de control:', err); });
+  }
+
+  function pintarControl(ph){
+    if (ph !== st.activo) return;
+    var btn = $('scBtnControl');
+    var banner = $('scPausa');
+    if (!btn) return;
+    var s = st.control[ph];
+    if (s && s.pausado){
+      var hasta = new Date(s.pausadoHasta).toLocaleTimeString('es-CR', { hour:'2-digit', minute:'2-digit' });
+      btn.classList.add('activo');
+      btn.textContent = '▶ Devolver a Sasha';
+      btn.title = 'Sasha está en pausa con este cliente hasta las ' + hasta;
+      banner.textContent = '⏸ Sasha está en pausa con este cliente hasta las ' + hasta + '. Vos tenés el control; cada mensaje que enviés renueva la pausa 60 min.';
+      banner.style.display = 'block';
+    } else {
+      btn.classList.remove('activo');
+      btn.textContent = '⏱ Tomar control';
+      btn.title = 'Pausar las respuestas automáticas de Sasha para este cliente';
+      banner.style.display = 'none';
+    }
+  }
+
+  function alternarControl(){
+    var ph = st.activo;
+    if (!ph) return;
+    var s = st.control[ph];
+    var endpoint = s && s.pausado ? 'liberar-control' : 'tomar-control';
+    var btn = $('scBtnControl');
+    if (btn) btn.disabled = true;
+
+    fetch(BOT_URL + '/api/conversacion/' + endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ telefono: ph })
+    })
+      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); consultarControl(ph); })
+      .catch(function(err){
+        console.error('[Chat Sasha] alternarControl:', err);
+        alert('No se pudo cambiar el control de la conversación. Verificá tu conexión.');
+      })
+      .then(function(){ if (btn) btn.disabled = false; });
+  }
+
+  // ── Enviar mensaje ───────────────────────────────────────────────────────
+  function enviar(){
+    var ph = st.activo;
+    var c = st.contactos[ph];
+    if (!c || c.source !== 'wa') return;
+    var input = $('scInput');
+    var texto = input.value.trim();
+    if (!texto) return;
+
+    var btn = $('scBtnEnviar');
+    btn.disabled = true;
+
+    fetch(BOT_URL + '/send-message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ telefono: ph, mensaje: texto })
+    })
+      .then(function(r){
+        if (r.ok) return null;
+        return r.json().catch(function(){ return {}; }).then(function(d){ throw new Error(d.error || ('HTTP ' + r.status)); });
+      })
+      .then(function(){
+        (st.pendientes[ph] = st.pendientes[ph] || []).push({
+          fecha: new Date().toISOString(), phone: ph, nombre: '', direction: 'out',
+          type: 'text', content: texto, mediaId: '', driveUrl: '', proyecto: '', zona: '', _pendiente: true
+        });
+        input.value = '';
+        ajustarAlto(input);
+        cerrarPaneles();
+        renderMensajes(ph, false);
+        // Mandar un mensaje manual pausa/renueva a Sasha 60 min en el bot.
+        consultarControl(ph);
+      })
+      .catch(function(err){
+        console.error('[Chat Sasha] enviar:', err);
+        alert('No se pudo enviar el mensaje: ' + err.message);
+      })
+      .then(function(){ btn.disabled = false; });
+  }
+
+  function ajustarAlto(el){
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 110) + 'px';
+  }
+
+  function cerrarPaneles(){
+    $('scRapidas').style.display = 'none';
+    $('scEmojis').style.display = 'none';
+    $('scBtnRapidas').classList.remove('activo');
+    $('scBtnEmojis').classList.remove('activo');
+  }
+
+  function alternarPanel(idPanel, idBtn, disp){
+    var abierto = $(idPanel).style.display !== 'none' && $(idPanel).style.display !== '';
+    cerrarPaneles();
+    if (!abierto){
+      $(idPanel).style.display = disp;
+      $(idBtn).classList.add('activo');
+    }
+  }
+
+  function insertarTexto(t){
+    var input = $('scInput');
+    var pos = input.selectionStart != null ? input.selectionStart : input.value.length;
+    input.value = input.value.slice(0, pos) + t + input.value.slice(pos);
+    input.focus();
+    input.setSelectionRange(pos + t.length, pos + t.length);
+    ajustarAlto(input);
+  }
+
+  // ── Eventos (delegados, sin onclick en línea) ────────────────────────────
+  $('scEmojis').innerHTML = EMOJIS.map(function(e){ return '<button type="button" data-emoji="' + e + '">' + e + '</button>'; }).join('');
+
+  $('scBtnActualizar').addEventListener('click', function(){ cargar(true); });
+  $('scBuscar').addEventListener('input', renderLista);
+
+  $('scFiltros').addEventListener('click', function(e){
+    var b = e.target.closest('.sc-filtro');
+    if (!b) return;
+    st.filtro = b.getAttribute('data-filtro');
+    Array.prototype.forEach.call(document.querySelectorAll('.sc-filtro'), function(x){ x.classList.toggle('activo', x === b); });
+    renderLista();
+  });
+
+  $('scLista').addEventListener('click', function(e){
+    var it = e.target.closest('.sc-contacto');
+    if (it) seleccionar(it.getAttribute('data-phone'));
+  });
+
+  $('scHead').addEventListener('click', function(e){
+    var b = e.target.closest('[data-accion]');
+    if (!b) return;
+    var a = b.getAttribute('data-accion');
+    if (a === 'volver') volverLista();
+    if (a === 'control') alternarControl();
+    if (a === 'copiar' && st.activo){
+      navigator.clipboard.writeText(st.activo).then(function(){
+        b.textContent = '✓ Copiado';
+        setTimeout(function(){ b.textContent = '📋 Copiar'; }, 1500);
+      });
+    }
+  });
+
+  $('scMensajes').addEventListener('click', function(e){
+    var img = e.target.closest('[data-sc-ver]');
+    if (img) abrirVisor(img.getAttribute('data-sc-url'), img.getAttribute('data-sc-ver'), img.getAttribute('data-sc-cap'));
+  });
+
+  // Fotos/audios/videos que no cargan (permisos de Drive): aviso en lugar del elemento roto.
+  $('scMensajes').addEventListener('error', function(e){
+    var el = e.target;
+    if (!el || ['IMG','AUDIO','VIDEO'].indexOf(el.tagName) === -1) return;
+    var nombre = { IMG:'la imagen', AUDIO:'el audio', VIDEO:'el video' }[el.tagName];
+    var aviso = document.createElement('div');
+    aviso.className = 'sc-no-disp';
+    aviso.innerHTML = '<div class="sc-archivo-icono">⚠️</div><div class="sc-archivo-txt"><div class="sc-archivo-tit">No se pudo cargar ' + nombre + '</div><div class="sc-archivo-sub">Revisá que el archivo en Drive tenga permiso de lectura.</div></div>';
+    el.replaceWith(aviso);
+  }, true);
+
+  $('scRapidas').addEventListener('click', function(e){
+    var b = e.target.closest('[data-rapida]');
+    if (!b) return;
+    var input = $('scInput');
+    input.value = RAPIDAS[b.getAttribute('data-rapida')] || '';
+    ajustarAlto(input);
+    input.focus();
+    cerrarPaneles();
+  });
+
+  $('scEmojis').addEventListener('click', function(e){
+    var b = e.target.closest('[data-emoji]');
+    if (b) insertarTexto(b.getAttribute('data-emoji'));
+  });
+
+  $('scBtnRapidas').addEventListener('click', function(){ alternarPanel('scRapidas', 'scBtnRapidas', 'flex'); });
+  $('scBtnEmojis').addEventListener('click', function(){ alternarPanel('scEmojis', 'scBtnEmojis', 'flex'); });
+  $('scBtnEnviar').addEventListener('click', enviar);
+  $('scBtnAudio').addEventListener('click', function(){
+    if (st.activo && st.contactos[st.activo] && st.contactos[st.activo].source === 'wa'){
+      window.open('https://wa.me/' + st.activo.replace(/\D/g, ''), '_blank');
+    }
+  });
+
+  $('scInput').addEventListener('input', function(){ ajustarAlto(this); });
+  $('scInput').addEventListener('keydown', function(e){
+    if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); enviar(); }
+  });
+
+  $('scModalCerrar').addEventListener('click', cerrarVisor);
+  $('scModal').addEventListener('click', function(e){ if (e.target.id === 'scModal') cerrarVisor(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') cerrarVisor(); });
+
+  // ── Ciclo de actualización ───────────────────────────────────────────────
+  setTimeout(function(){ if (!st.cargado) cargar(false); }, PRIMERA_CARGA_MS);
+
+  setInterval(function(){
+    if (document.visibilityState === 'hidden') return;
+    var espera = st.visible ? REFRESCO_VISIBLE_MS : REFRESCO_FONDO_MS;
+    if (Date.now() - st.ultimaCargaTs >= espera - 1000) cargar(false);
+  }, REFRESCO_VISIBLE_MS);
+
+  // ── API pública mínima (la usa la navegación por pestañas) ───────────────
+  window.SashaChat = {
+    setVisible: function(visible){
+      st.visible = !!visible;
+      if (!st.visible) return;
+      if (st.activo && st.contactos[st.activo]){
+        marcarVisto(st.activo);
+        actualizarNoLeidos();
+        renderLista();
+        if (st.contactos[st.activo].source === 'wa') consultarControl(st.activo);
+      }
+      // Si los datos tienen más de 60 s (o nunca se cargaron), refrescar ya.
+      if (!st.cargado || Date.now() - st.ultimaCargaTs > REFRESCO_VISIBLE_MS) cargar(false);
+    }
+  };
 
 })();
 </script>
